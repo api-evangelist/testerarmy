@@ -1,0 +1,341 @@
+openapi: 3.0.0
+info:
+  title: TestArmy Groups Webhooks API
+  version: 1.0.0
+  description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
+servers:
+- url: https://tester.army/api
+  description: Production API server
+tags:
+- name: Webhooks
+paths:
+  /v1/webhook/{webhookId}/{secret}:
+    post:
+      summary: Trigger a project webhook
+      description: Receive a deployment webhook and trigger PR testing when configured.
+      tags:
+      - Webhooks
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Webhook ID
+        required: true
+        description: Webhook ID
+        name: webhookId
+        in: path
+      - schema:
+          type: string
+          description: Webhook secret
+        required: true
+        description: Webhook secret
+        name: secret
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                nullable: true
+      responses:
+        '200':
+          description: Webhook accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+                  ignored:
+                    type: boolean
+                  reason:
+                    type: string
+                  runId:
+                    type: string
+                    format: uuid
+                  batchId:
+                    type: string
+                    format: uuid
+                    deprecated: true
+                    description: First created batch only. Use batchIds, which covers every PR test group.
+                  batchIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                    description: One batch per selected PR test group started by this delivery.
+                required:
+                - received
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/groups/webhook/{webhookId}/{secret}:
+    post:
+      summary: Trigger a group webhook
+      description: Trigger all runnable tests in a group from a signed webhook URL.
+      tags:
+      - Webhooks
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Webhook ID
+        required: true
+        description: Webhook ID
+        name: webhookId
+        in: path
+      - schema:
+          type: string
+          description: Webhook secret
+        required: true
+        description: Webhook secret
+        name: secret
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platform:
+                  type: string
+                  enum:
+                  - web
+                  - ios
+                  - android
+                deviceModel:
+                  type: string
+                  enum:
+                  - iphone
+                  - ipad
+                  description: 'Mobile device variant within the run platform (iOS: iphone | ipad). Omit for the platform default phone-sized device; explicitly requesting the default (e.g. iphone) is equivalent to omitting it.'
+                projectEnvironmentId:
+                  type: string
+                  format: uuid
+                targetUrl:
+                  type: string
+                  format: uri
+                environment:
+                  type: string
+                  enum:
+                  - production
+                  - staging
+                  - preview
+                  - custom
+                mobile:
+                  type: object
+                  properties:
+                    appId:
+                      type: string
+                      format: uuid
+                    bundleId:
+                      type: string
+                      minLength: 1
+                    artifactUrl:
+                      type: string
+                      format: uri
+                    artifactFilename:
+                      type: string
+                      minLength: 1
+                    buildId:
+                      type: string
+                      minLength: 1
+                  additionalProperties: false
+                commitSha:
+                  type: string
+      responses:
+        '202':
+          description: Webhook accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+                  ignored:
+                    type: boolean
+                  reason:
+                    type: string
+                  runId:
+                    type: string
+                    format: uuid
+                  batchId:
+                    type: string
+                    format: uuid
+                    deprecated: true
+                    description: First created batch only. Use batchIds, which covers every PR test group.
+                  batchIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                    description: One batch per selected PR test group started by this delivery.
+                required:
+                - received
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API key authentication using Bearer token format

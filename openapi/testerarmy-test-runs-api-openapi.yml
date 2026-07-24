@@ -1,0 +1,1338 @@
+openapi: 3.0.0
+info:
+  title: TestArmy Groups Test Runs API
+  version: 1.0.0
+  description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
+servers:
+- url: https://tester.army/api
+  description: Production API server
+tags:
+- name: Test Runs
+paths:
+  /v1/runs:
+    get:
+      summary: List test runs
+      description: List test runs for the authenticated team with optional project/status filtering and cursor pagination.
+      tags:
+      - Test Runs
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          pattern: ^(?:[1-9]|[1-9][0-9]|100)$
+          description: Max results per page (default 20, max 100)
+        required: false
+        description: Max results per page (default 20, max 100)
+        name: limit
+        in: query
+      - schema:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+          - failed
+          - cancelled
+          description: Filter by status
+        required: false
+        description: Filter by status
+        name: status
+        in: query
+      - schema:
+          type: string
+          format: uuid
+          description: Filter by project ID
+        required: false
+        description: Filter by project ID
+        name: projectId
+        in: query
+      - schema:
+          type: string
+          format: uuid
+          description: Filter by test ID
+        required: false
+        description: Filter by test ID
+        name: testId
+        in: query
+      - schema:
+          type: string
+          description: Cursor for pagination
+        required: false
+        description: Cursor for pagination
+        name: cursor
+        in: query
+      responses:
+        '200':
+          description: List of runs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunListResponse'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/runs/{id}:
+    get:
+      summary: Get test run status
+      description: Retrieve the current status and result of a test run. Poll this endpoint to check for completion.
+      tags:
+      - Test Runs
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test run ID
+        required: true
+        description: Test run ID
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Run details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunResponse'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/runs/{id}/cancel:
+    post:
+      summary: Cancel a queued or running run
+      description: Cancel a queued or running test run.
+      tags:
+      - Test Runs
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test run ID
+        required: true
+        description: Test run ID
+        name: id
+        in: path
+      responses:
+        '200':
+          description: Run cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum:
+                    - cancelled
+                required:
+                - id
+                - status
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '409':
+          description: Conflict - Run is already terminal or cannot be cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/batches/{batchId}/cancel:
+    post:
+      summary: Cancel a queued or running batch
+      description: Cancel all queued or running runs in a prior group-run batch. Finished runs are left unchanged, making the endpoint idempotent when the batch has already completed.
+      tags:
+      - Test Runs
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Batch ID
+        required: true
+        description: Batch ID
+        name: batchId
+        in: path
+      responses:
+        '200':
+          description: Batch cancellation summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  batchId:
+                    type: string
+                    format: uuid
+                  cancelled:
+                    type: integer
+                    minimum: 0
+                  alreadyFinished:
+                    type: integer
+                    minimum: 0
+                  cancelledRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  alreadyFinishedRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                required:
+                - batchId
+                - cancelled
+                - alreadyFinished
+                - cancelledRunIds
+                - alreadyFinishedRunIds
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Batch not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '409':
+          description: Conflict - Some runs could not be cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                  batchId:
+                    type: string
+                    format: uuid
+                  cancelled:
+                    type: integer
+                    minimum: 0
+                  alreadyFinished:
+                    type: integer
+                    minimum: 0
+                  cancelledRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  alreadyFinishedRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  failedRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                required:
+                - error
+                - message
+                - batchId
+                - cancelled
+                - alreadyFinished
+                - cancelledRunIds
+                - alreadyFinishedRunIds
+                - failedRunIds
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/batches/{batchId}/rerun:
+    post:
+      summary: Re-run a batch
+      description: Create a new group-run batch from the runnable tests in a prior batch. Deleted, disabled, or malformed tests are skipped and returned as `skippedTestIds`.
+      tags:
+      - Test Runs
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Source batch ID
+        required: true
+        description: Source batch ID
+        name: batchId
+        in: path
+      responses:
+        '202':
+          description: Batch re-run queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                    - cancelled
+                  groupId:
+                    type: string
+                    format: uuid
+                  batchId:
+                    type: string
+                    format: uuid
+                  sourceBatchId:
+                    type: string
+                    format: uuid
+                  runIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  queuedRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  cancelledRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  skippedTestIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  count:
+                    type: integer
+                required:
+                - status
+                - groupId
+                - batchId
+                - sourceBatchId
+                - runIds
+                - queuedRunIds
+                - cancelledRunIds
+                - skippedTestIds
+                - count
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Batch not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '409':
+          description: Conflict - Batch cannot be re-run
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+components:
+  schemas:
+    RunListResponse:
+      type: object
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          description: List of runs
+        nextCursor:
+          type: string
+          nullable: true
+          description: Cursor for fetching the next page
+      required:
+      - runs
+    TestOutput:
+      type: object
+      properties:
+        featureName:
+          type: string
+          description: Name of the feature being tested
+        result:
+          type: string
+          enum:
+          - PASS
+          - FAILED
+          description: Test result - PASS if no issues found, FAILED if any issues were reported
+        description:
+          type: string
+          description: Short summary of what was tested and the final result; include a compact grouped issue summary only when the user explicitly asks for one
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+          default: []
+          description: Issues reported during the session via the report_issue tool
+        screenshots:
+          type: array
+          items:
+            type: string
+          description: Array of screenshot URLs captured during testing
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestOutputStep'
+          description: Per-step summaries with timing information
+      required:
+      - featureName
+      - result
+      - description
+      - screenshots
+    ReusableActionTarget:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - role
+          - css
+          - vision
+          - focused
+          - none
+        role:
+          type: string
+          maxLength: 60
+        name:
+          type: string
+          maxLength: 120
+        nth:
+          type: integer
+          minimum: 0
+        selector:
+          type: string
+          maxLength: 240
+        element:
+          type: string
+          maxLength: 140
+      required:
+      - kind
+    ReusableActionStep:
+      type: object
+      properties:
+        order:
+          type: integer
+          minimum: 0
+        toolName:
+          type: string
+          maxLength: 64
+        summary:
+          type: string
+        target:
+          $ref: '#/components/schemas/ReusableActionTarget'
+        input:
+          type: object
+          properties:
+            url:
+              type: string
+              maxLength: 300
+            field:
+              type: string
+              enum:
+              - username
+              - password
+            option:
+              type: string
+              maxLength: 120
+            key:
+              type: string
+              maxLength: 60
+            direction:
+              type: string
+              enum:
+              - up
+              - down
+              - left
+              - right
+            amount:
+              type: integer
+            focused:
+              type: boolean
+            sequentially:
+              type: boolean
+      required:
+      - order
+      - toolName
+      - summary
+    RunResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique run identifier
+        type:
+          type: string
+          enum:
+          - ci
+          - test
+          description: Run type
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+          - failed
+          - cancelled
+          description: Current run status
+        platform:
+          type: string
+          nullable: true
+          enum:
+          - web
+          - ios
+          - android
+          - null
+          description: Target platform
+        deviceModel:
+          type: string
+          nullable: true
+          enum:
+          - iphone
+          - ipad
+          - null
+          description: Non-default mobile device variant within the run platform (e.g. ipad on iOS). Null means the platform default phone-sized device; explicitly requested defaults are stored as null.
+        source:
+          type: string
+          nullable: true
+          enum:
+          - api
+          - github_action
+          - github_app
+          - scheduled
+          - webhook
+          - structured_test
+          - null
+          description: Run source
+        projectId:
+          type: string
+          nullable: true
+          format: uuid
+          description: Linked project ID
+        input:
+          type: object
+          additionalProperties:
+            nullable: true
+          description: Original request input
+        output:
+          anyOf:
+          - $ref: '#/components/schemas/TestOutput'
+          - $ref: '#/components/schemas/PlannerSkippedOutput'
+          - nullable: true
+          description: Run output when completed or skipped
+        testPlan:
+          type: object
+          nullable: true
+          properties:
+            instructions:
+              type: string
+              description: Natural language instructions for the QA agent
+            focusAreas:
+              type: array
+              items:
+                type: string
+              description: Focus areas derived from changed files
+            complexity:
+              type: string
+              enum:
+              - simple
+              - moderate
+              - complex
+              description: Estimated test complexity (affects timeout)
+            changeType:
+              type: string
+              enum:
+              - frontend
+              - backend
+              - mixed
+              - infra
+              description: 'Classify this PR: frontend = UI/component changes, backend = API/DB/service changes with no visible UI effect, mixed = both, infra = CI/config/docs only'
+            steps:
+              type: array
+              items:
+                oneOf:
+                - type: object
+                  properties:
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 500
+                      description: Concise description of what to do or verify
+                    type:
+                      type: string
+                      enum:
+                      - act
+                      description: Perform an action
+                  required:
+                  - title
+                  - type
+                - type: object
+                  properties:
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 500
+                      description: Concise description of what to do or verify
+                    type:
+                      type: string
+                      enum:
+                      - assert
+                      description: Verify a condition
+                  required:
+                  - title
+                  - type
+                - type: object
+                  properties:
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 500
+                      description: Concise description of the login step
+                    type:
+                      type: string
+                      enum:
+                      - login
+                      description: Authenticate using a credential
+                    credentialId:
+                      type: string
+                      description: ID of the credential to use
+                    temporaryEmail:
+                      type: boolean
+                      description: Set to true to create a temporary email inbox at run time
+                  required:
+                  - title
+                  - type
+                - type: object
+                  properties:
+                    title:
+                      type: string
+                      minLength: 1
+                      maxLength: 500
+                      description: Description of what page state to capture
+                    type:
+                      type: string
+                      enum:
+                      - screenshot
+                      description: Capture visual evidence of the current page state
+                  required:
+                  - title
+                  - type
+              minItems: 1
+              maxItems: 10
+              description: Ordered list of concrete test steps the agent must execute one-by-one
+            executionConfig:
+              type: object
+              properties:
+                viewport:
+                  type: object
+                  properties:
+                    width:
+                      type: integer
+                      minimum: 320
+                      maximum: 3840
+                    height:
+                      type: integer
+                      minimum: 240
+                      maximum: 2160
+                  required:
+                  - width
+                  - height
+              description: Pre-run execution configuration selected by the planner.
+          required:
+          - instructions
+          - focusAreas
+          - complexity
+          - changeType
+          - steps
+          description: Generated test plan (CI runs only)
+        error:
+          type: object
+          nullable: true
+          properties:
+            code:
+              type: string
+              description: Error code
+            message:
+              type: string
+              description: Human-readable error message
+          required:
+          - code
+          - message
+          description: Error details when failed
+        durationMs:
+          type: number
+          nullable: true
+          description: Execution time in milliseconds
+        webhookUrl:
+          type: string
+          nullable: true
+          format: uri
+          description: Webhook delivery URL
+        webhookStatus:
+          type: string
+          nullable: true
+          enum:
+          - pending
+          - delivered
+          - failed
+          - null
+          description: Webhook delivery status
+        testId:
+          type: string
+          nullable: true
+          format: uuid
+          description: Linked test ID
+        stepResults:
+          type: array
+          nullable: true
+          items:
+            type: object
+            additionalProperties:
+              nullable: true
+          description: Step-level results for structured test runs
+        userName:
+          type: string
+          nullable: true
+          description: Display name of the user who triggered the run
+        externalRef:
+          type: object
+          nullable: true
+          additionalProperties:
+            nullable: true
+          description: External integration metadata (e.g. GitHub PR/deployment IDs)
+        executionMode:
+          type: string
+          nullable: true
+          enum:
+          - fast
+          - deep
+          - null
+          description: Execution mode used for this run
+        autoRetryCount:
+          type: integer
+          nullable: true
+          description: Number of times the run was automatically retried after a temporary failure. Failed attempts are not counted toward usage.
+        createdAt:
+          type: string
+          format: date-time
+          description: When the run was created
+        startedAt:
+          type: string
+          nullable: true
+          format: date-time
+          description: When execution started
+        completedAt:
+          type: string
+          nullable: true
+          format: date-time
+          description: When execution finished
+      required:
+      - id
+      - type
+      - status
+      - input
+      - createdAt
+    ReusableActionTrace:
+      type: object
+      properties:
+        version:
+          type: number
+          enum:
+          - 1
+        stepKey:
+          type: string
+          maxLength: 160
+        stepTitle:
+          type: string
+          maxLength: 200
+        stepType:
+          type: string
+          enum:
+          - act
+          - assert
+          - login
+          - files
+          - screenshot
+          - javascript
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReusableActionStep'
+          minItems: 1
+          maxItems: 20
+        confidence:
+          type: string
+          enum:
+          - medium
+          - high
+      required:
+      - version
+      - stepKey
+      - stepTitle
+      - actions
+      - confidence
+    TestOutputStep:
+      type: object
+      properties:
+        stepIndex:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+          - act
+          - assert
+          - login
+          - files
+          - screenshot
+          - javascript
+        status:
+          type: string
+          enum:
+          - passed
+          - failed
+        summary:
+          type: string
+        error:
+          type: string
+          nullable: true
+        errorCode:
+          type: string
+          enum:
+          - AUTH_CREDENTIAL_UNAVAILABLE
+          - AUTH_CREDENTIAL_INVALID
+          - AUTH_BASIC_REQUIRED
+          - VERCEL_BYPASS_REQUIRED
+          - MOBILE_RELEASE_BUILD_REQUIRED
+          - VIEWPORT_RESIZE_UNSUPPORTED
+          - STEP_TOOL_LIMIT_EXHAUSTED
+          - STEP_DEADLINE_EXHAUSTED
+          - STEP_NO_CONCLUSION
+        startedAtMs:
+          type: integer
+          description: Milliseconds elapsed since recording reference when the step started
+        completedAtMs:
+          type: integer
+          description: Milliseconds elapsed since recording reference when the step completed
+        reusableActionTrace:
+          $ref: '#/components/schemas/ReusableActionTrace'
+      required:
+      - stepIndex
+      - title
+      - status
+    Issue:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - warning
+          default: issue
+          description: issue = confirmed bug, warning = non-blocking observation
+        name:
+          type: string
+          description: Short name of the issue (e.g. 'Login form rejects valid email')
+        description:
+          type: string
+          description: What was tested, what happened, and what was expected
+        url:
+          type: string
+          format: uri
+          description: URL where the issue happened
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Issue severity from 1 (minor) to 5 (critical)
+        reproductionSteps:
+          type: array
+          items:
+            type: string
+          description: Short reproduction steps in execution order
+        expectedBehavior:
+          type: string
+          description: What should have happened
+        actualBehavior:
+          type: string
+          description: What actually happened
+        screenshotUrl:
+          type: string
+          description: Screenshot URL showing the issue
+        tMs:
+          type: integer
+          description: Milliseconds elapsed since the recording reference time when the issue was reported
+      required:
+      - name
+      - description
+      - url
+    PlannerSkippedOutput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - planner_skipped
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required:
+      - kind
+      - reason
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API key authentication using Bearer token format

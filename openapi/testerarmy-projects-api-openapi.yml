@@ -1,0 +1,3304 @@
+openapi: 3.0.0
+info:
+  title: TestArmy Groups Projects API
+  version: 1.0.0
+  description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
+servers:
+- url: https://tester.army/api
+  description: Production API server
+tags:
+- name: Projects
+paths:
+  /v1/projects:
+    get:
+      summary: List projects
+      description: List projects available to the authenticated API key's team.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        shortId:
+                          type: string
+                        name:
+                          type: string
+                        url:
+                          type: string
+                          nullable: true
+                          format: uri
+                        projectType:
+                          type: string
+                          enum:
+                          - web
+                          - mobile
+                        environments:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                format: uuid
+                              name:
+                                type: string
+                              slug:
+                                type: string
+                              kind:
+                                type: string
+                                enum:
+                                - production
+                                - pr_preview
+                                - static
+                              url:
+                                type: string
+                                nullable: true
+                            required:
+                            - id
+                            - name
+                            - slug
+                            - kind
+                            - url
+                      required:
+                      - id
+                      - shortId
+                      - name
+                      - url
+                      - projectType
+                required:
+                - projects
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a project
+      description: Create a project for the authenticated API key's team.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                url:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                projectType:
+                  type: string
+                  enum:
+                  - web
+                  - mobile
+                description:
+                  type: string
+                  nullable: true
+                  maxLength: 2000
+              required:
+              - name
+              - url
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: '#/components/schemas/ProjectDetail'
+                required:
+                - project
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '403':
+          description: Project limit exceeded for the current plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                  currentCount:
+                    type: integer
+                    minimum: 0
+                  limit:
+                    type: integer
+                    minimum: 0
+                required:
+                - error
+                - message
+                - currentCount
+                - limit
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}:
+    get:
+      summary: Get a project
+      description: Get a single project by ID or shortId.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectDetail'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    patch:
+      summary: Update a project
+      description: Update project name, URL, or description.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                url:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                description:
+                  type: string
+                  nullable: true
+                  maxLength: 2000
+      responses:
+        '200':
+          description: Project updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project:
+                    $ref: '#/components/schemas/ProjectDetail'
+                required:
+                - project
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    delete:
+      summary: Delete a project
+      description: Delete a project. Cascades to groups, tests, runs, and associated artifacts.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: Project deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    enum:
+                    - true
+                  id:
+                    type: string
+                    format: uuid
+                required:
+                - deleted
+                - id
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/pull-request-runs:
+    post:
+      summary: Trigger a dynamic pull request run
+      description: Trigger the dynamic PR agent from CI using PR metadata. Callers do not send changed files; TesterArmy enriches with changed files and GitHub reporting only when the project has a supported GitHub connection.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DynamicPrRunRequest'
+      responses:
+        '202':
+          description: Dynamic PR run queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                  runId:
+                    type: string
+                    format: uuid
+                  projectId:
+                    type: string
+                    format: uuid
+                  platform:
+                    type: string
+                    enum:
+                    - web
+                    - ios
+                    - android
+                  metadata:
+                    type: object
+                    properties:
+                      github:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          checkRunCreated:
+                            type: boolean
+                          commentTargetResolved:
+                            type: boolean
+                          status:
+                            type: string
+                            enum:
+                            - not_configured
+                            - check_create_failed
+                            - pr_not_found
+                        required:
+                        - configured
+                        - checkRunCreated
+                        - commentTargetResolved
+                      mobile:
+                        type: object
+                        properties:
+                          source:
+                            type: string
+                          buildId:
+                            type: string
+                        required:
+                        - source
+                required:
+                - status
+                - runId
+                - projectId
+                - platform
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '413':
+          description: Request body too large
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/environments:
+    get:
+      summary: List project environments
+      description: List all run environments for a project, including built-in Production and PR Preview plus static environments.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: List of project environments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  environments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectEnvironment'
+                required:
+                - environments
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a project environment
+      description: Create a static project environment with a stable HTTPS URL. Built-in Production and PR Preview environments are managed by TesterArmy.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                url:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+              required:
+              - name
+              - url
+              additionalProperties: false
+      responses:
+        '201':
+          description: Project environment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  environment:
+                    $ref: '#/components/schemas/ProjectEnvironment'
+                required:
+                - environment
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '409':
+          description: Environment name conflicts with an existing environment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/environments/{environmentId}:
+    delete:
+      summary: Delete a project environment
+      description: Delete a static project environment. Built-in Production and PR Preview environments are not deletable.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      - schema:
+          type: string
+          format: uuid
+          description: Static environment ID
+        required: true
+        description: Static environment ID
+        name: environmentId
+        in: path
+      responses:
+        '200':
+          description: Project environment deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    enum:
+                    - true
+                  id:
+                    type: string
+                    format: uuid
+                required:
+                - deleted
+                - id
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project or environment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/credentials:
+    get:
+      summary: List project credentials
+      description: List credentials for a project. Passwords are not returned.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: List of credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  credentials:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CredentialSummary'
+                required:
+                - credentials
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a project credential
+      description: Create a login or inbox credential for a project. Passwords are not returned.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: object
+                properties:
+                  kind:
+                    type: string
+                    enum:
+                    - login
+                  authMethod:
+                    type: string
+                    enum:
+                    - password
+                    - google
+                    - github
+                  label:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                  username:
+                    type: string
+                    minLength: 1
+                    maxLength: 255
+                  password:
+                    type: string
+                    minLength: 1
+                required:
+                - kind
+                - label
+                - username
+                - password
+                additionalProperties: false
+              - type: object
+                properties:
+                  kind:
+                    type: string
+                    enum:
+                    - login
+                  authMethod:
+                    type: string
+                    enum:
+                    - custom
+                  label:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                  authInstructions:
+                    type: string
+                    minLength: 1
+                    maxLength: 4000
+                required:
+                - kind
+                - authMethod
+                - label
+                - authInstructions
+                additionalProperties: false
+              - type: object
+                properties:
+                  kind:
+                    type: string
+                    enum:
+                    - inbox
+                  label:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                required:
+                - kind
+                - label
+                additionalProperties: false
+      responses:
+        '201':
+          description: Credential created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  credential:
+                    $ref: '#/components/schemas/CredentialSummary'
+                required:
+                - credential
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/memories:
+    get:
+      summary: List project memories
+      description: List manual project memories used as context for dashboard tests and agents.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: List of project memories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memories:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectMemory'
+                  count:
+                    type: integer
+                  maxMemories:
+                    type: integer
+                required:
+                - memories
+                - count
+                - maxMemories
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a project memory
+      description: Create a manual project memory that agents can use as project context.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                  enum:
+                  - site_structure
+                  - test_insights
+                  - user_preferences
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                content:
+                  type: string
+                  minLength: 1
+                importance:
+                  type: string
+                  enum:
+                  - high
+                  - medium
+                  - low
+              required:
+              - category
+              - title
+              - content
+              - importance
+      responses:
+        '201':
+          description: Project memory created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  memory:
+                    $ref: '#/components/schemas/ProjectMemory'
+                  pruned:
+                    type: integer
+                required:
+                - memory
+                - pruned
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '409':
+          description: Memory limit reached and no lower-priority memories can be pruned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/memories/{memoryId}:
+    delete:
+      summary: Delete a project memory
+      description: Delete a manual project memory used as agent context.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID or shortId
+        required: true
+        description: Project ID or shortId
+        name: projectId
+        in: path
+      - schema:
+          type: string
+          format: uuid
+          description: Memory ID
+        required: true
+        description: Memory ID
+        name: memoryId
+        in: path
+      responses:
+        '200':
+          description: Project memory deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                required:
+                - deleted
+                - id
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project or memory not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/files:
+    get:
+      summary: List project files
+      description: List uploaded files for a project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectFileSummary'
+                required:
+                - files
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/mobile:
+    get:
+      summary: List project mobile apps
+      description: List uploaded mobile apps for a mobile project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      responses:
+        '200':
+          description: List of project mobile apps
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apps:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        platform:
+                          type: string
+                          enum:
+                          - ios
+                          - android
+                        filename:
+                          type: string
+                        bundleId:
+                          type: string
+                          nullable: true
+                        appVersion:
+                          type: string
+                          nullable: true
+                        buildVersion:
+                          type: string
+                          nullable: true
+                        fileSize:
+                          type: number
+                        source:
+                          type: string
+                          enum:
+                          - manual_upload
+                          - group_webhook_artifact
+                          - api_upload
+                        expiresAt:
+                          type: string
+                          nullable: true
+                          format: date-time
+                        removeAfter:
+                          type: integer
+                          nullable: true
+                        createdAt:
+                          type: string
+                          format: date-time
+                      required:
+                      - id
+                      - platform
+                      - filename
+                      - bundleId
+                      - appVersion
+                      - buildVersion
+                      - fileSize
+                      - source
+                      - expiresAt
+                      - removeAfter
+                      - createdAt
+                required:
+                - apps
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Upload a project mobile app
+      description: Upload a mobile app binary to a mobile project. Optionally set removeAfter to delete temporary uploads after a delay.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                removeAfter:
+                  type: string
+                  description: Optional expiration in seconds for temporary uploads, from 60 to 604800. Temporary uploads have a 20 GB storage cap per project.
+              required:
+              - file
+      responses:
+        '201':
+          description: Mobile app uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  app:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      platform:
+                        type: string
+                        enum:
+                        - ios
+                        - android
+                      filename:
+                        type: string
+                      bundleId:
+                        type: string
+                        nullable: true
+                      appVersion:
+                        type: string
+                        nullable: true
+                      buildVersion:
+                        type: string
+                        nullable: true
+                      fileSize:
+                        type: number
+                      source:
+                        type: string
+                        enum:
+                        - manual_upload
+                        - group_webhook_artifact
+                        - api_upload
+                      expiresAt:
+                        type: string
+                        nullable: true
+                        format: date-time
+                      removeAfter:
+                        type: integer
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+                    required:
+                    - id
+                    - platform
+                    - filename
+                    - bundleId
+                    - appVersion
+                    - buildVersion
+                    - fileSize
+                    - source
+                    - expiresAt
+                    - removeAfter
+                    - createdAt
+                required:
+                - app
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/mobile/{appId}:
+    delete:
+      summary: Delete a project mobile app
+      description: Delete a previously uploaded mobile app from a mobile project.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      - schema:
+          type: string
+          format: uuid
+          description: Mobile app ID
+        required: true
+        description: Mobile app ID
+        name: appId
+        in: path
+      responses:
+        '200':
+          description: Mobile app deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - deleted
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Project or mobile app not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/mobile/upload:
+    post:
+      summary: Initiate a project mobile app upload
+      description: Create a presigned temporary upload for a mobile app binary.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  minLength: 1
+                fileSize:
+                  type: integer
+                  minimum: 0
+                  exclusiveMinimum: true
+                removeAfter:
+                  type: integer
+                  minimum: 60
+                  maximum: 604800
+              required:
+              - filename
+              - fileSize
+      responses:
+        '200':
+          description: Presigned upload details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadUrl:
+                    type: string
+                    format: uri
+                  storageKey:
+                    type: string
+                  filename:
+                    type: string
+                  fileSize:
+                    type: integer
+                  removeAfter:
+                    type: integer
+                    nullable: true
+                required:
+                - uploadUrl
+                - storageKey
+                - filename
+                - fileSize
+                - removeAfter
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/projects/{projectId}/mobile/upload/confirm:
+    post:
+      summary: Confirm a project mobile app upload
+      description: Validate a completed temporary upload and promote it into project storage.
+      tags:
+      - Projects
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                storageKey:
+                  type: string
+                  minLength: 1
+                filename:
+                  type: string
+                  minLength: 1
+                fileSize:
+                  type: integer
+                  minimum: 0
+                  exclusiveMinimum: true
+                removeAfter:
+                  type: integer
+                  minimum: 60
+                  maximum: 604800
+              required:
+              - storageKey
+              - filename
+              - fileSize
+      responses:
+        '201':
+          description: Mobile app uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  app:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      platform:
+                        type: string
+                        enum:
+                        - ios
+                        - android
+                      filename:
+                        type: string
+                      bundleId:
+                        type: string
+                        nullable: true
+                      appVersion:
+                        type: string
+                        nullable: true
+                      buildVersion:
+                        type: string
+                        nullable: true
+                      fileSize:
+                        type: number
+                      source:
+                        type: string
+                        enum:
+                        - manual_upload
+                        - group_webhook_artifact
+                        - api_upload
+                      expiresAt:
+                        type: string
+                        nullable: true
+                        format: date-time
+                      removeAfter:
+                        type: integer
+                        nullable: true
+                      createdAt:
+                        type: string
+                        format: date-time
+                    required:
+                    - id
+                    - platform
+                    - filename
+                    - bundleId
+                    - appVersion
+                    - buildVersion
+                    - fileSize
+                    - source
+                    - expiresAt
+                    - removeAfter
+                    - createdAt
+                required:
+                - app
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+components:
+  schemas:
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        shortId:
+          type: string
+          nullable: true
+        name:
+          type: string
+        url:
+          type: string
+          nullable: true
+        projectType:
+          type: string
+          enum:
+          - web
+          - mobile
+        description:
+          type: string
+          nullable: true
+        environments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+              kind:
+                type: string
+                enum:
+                - production
+                - pr_preview
+                - static
+              url:
+                type: string
+                nullable: true
+            required:
+            - id
+            - name
+            - slug
+            - kind
+            - url
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - shortId
+      - name
+      - url
+      - projectType
+      - description
+      - environments
+    ProjectFileSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type: string
+          nullable: true
+          format: uuid
+        filename:
+          type: string
+        mediaType:
+          type: string
+        fileSize:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        summary:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          nullable: true
+          format: date-time
+      required:
+      - id
+      - projectId
+      - filename
+      - mediaType
+      - fileSize
+      - description
+      - summary
+      - createdAt
+    CredentialSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum:
+          - login
+          - inbox
+        authMethod:
+          type: string
+          enum:
+          - password
+          - google
+          - github
+          - custom
+        label:
+          type: string
+        username:
+          type: string
+        hasAuthInstructions:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - kind
+      - authMethod
+      - label
+      - username
+      - hasAuthInstructions
+      - createdAt
+    ProjectEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        kind:
+          type: string
+          enum:
+          - production
+          - pr_preview
+          - static
+        url:
+          type: string
+          nullable: true
+      required:
+      - id
+      - name
+      - slug
+      - kind
+      - url
+    ProjectMemory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          type: string
+          enum:
+          - site_structure
+          - test_insights
+          - user_preferences
+        title:
+          type: string
+        content:
+          type: string
+        importance:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - category
+      - title
+      - content
+      - importance
+      - createdAt
+      - updatedAt
+    DynamicPrRunRequest:
+      anyOf:
+      - type: object
+        properties:
+          targetUrl:
+            type: string
+            format: uri
+          platform:
+            type: string
+            enum:
+            - web
+          pullRequest:
+            type: object
+            properties:
+              provider:
+                type: string
+                enum:
+                - github
+                default: github
+              number:
+                type: integer
+                minimum: 0
+                exclusiveMinimum: true
+              title:
+                type: string
+                minLength: 1
+                maxLength: 500
+              description:
+                type: string
+                maxLength: 5000
+              baseBranch:
+                type: string
+                minLength: 1
+                maxLength: 255
+              headBranch:
+                type: string
+                minLength: 1
+                maxLength: 255
+              commitSha:
+                type: string
+                minLength: 1
+                maxLength: 100
+            required:
+            - number
+            - title
+            - commitSha
+            additionalProperties: false
+        required:
+        - targetUrl
+        - pullRequest
+        additionalProperties: false
+      - type: object
+        properties:
+          platform:
+            type: string
+            enum:
+            - ios
+            - android
+          pullRequest:
+            type: object
+            properties:
+              provider:
+                type: string
+                enum:
+                - github
+                default: github
+              number:
+                type: integer
+                minimum: 0
+                exclusiveMinimum: true
+              title:
+                type: string
+                minLength: 1
+                maxLength: 500
+              description:
+                type: string
+                maxLength: 5000
+              baseBranch:
+                type: string
+                minLength: 1
+                maxLength: 255
+              headBranch:
+                type: string
+                minLength: 1
+                maxLength: 255
+              commitSha:
+                type: string
+                minLength: 1
+                maxLength: 100
+            required:
+            - number
+            - title
+            - commitSha
+            additionalProperties: false
+          mobile:
+            type: object
+            properties:
+              appId:
+                type: string
+                format: uuid
+              bundleId:
+                type: string
+                minLength: 1
+              artifactUrl:
+                type: string
+                format: uri
+              artifactFilename:
+                type: string
+                minLength: 1
+              buildId:
+                type: string
+                minLength: 1
+            additionalProperties: false
+          simulatorRegion:
+            type: string
+            enum:
+            - eu-north1
+            - us-west1
+        required:
+        - platform
+        - pullRequest
+        additionalProperties: false
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API key authentication using Bearer token format

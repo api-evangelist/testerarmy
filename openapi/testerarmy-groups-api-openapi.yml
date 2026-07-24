@@ -1,0 +1,1258 @@
+openapi: 3.0.0
+info:
+  title: TestArmy Groups API
+  version: 1.0.0
+  description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
+servers:
+- url: https://tester.army/api
+  description: Production API server
+tags:
+- name: Groups
+paths:
+  /v1/groups:
+    get:
+      summary: List test groups
+      description: List test groups for a project. The default All Tests group is always returned and new tests are added to it at creation time.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: query
+      responses:
+        '200':
+          description: List of test groups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        isDefault:
+                          type: boolean
+                        testCount:
+                          type: integer
+                        prepTestId:
+                          type: string
+                          nullable: true
+                          format: uuid
+                      required:
+                      - id
+                      - name
+                      - isDefault
+                      - testCount
+                      - prepTestId
+                required:
+                - groups
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a test group
+      description: Create a test group in a project. Capped at 20 groups per project.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  description: Project ID
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                runMode:
+                  type: string
+                  enum:
+                  - concurrent
+                  - sequential
+                prepTestId:
+                  type: string
+                  nullable: true
+                  format: uuid
+              required:
+              - projectId
+              - name
+      responses:
+        '201':
+          description: Group created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      name:
+                        type: string
+                      isDefault:
+                        type: boolean
+                      runMode:
+                        type: string
+                        enum:
+                        - concurrent
+                        - sequential
+                      prepTestId:
+                        type: string
+                        nullable: true
+                        format: uuid
+                      projectId:
+                        type: string
+                        format: uuid
+                    required:
+                    - id
+                    - name
+                    - isDefault
+                    - runMode
+                    - prepTestId
+                    - projectId
+                required:
+                - group
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/groups/{groupId}:
+    get:
+      summary: Get a test group
+      description: Get a single test group by ID.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      responses:
+        '200':
+          description: Group details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupDetail'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    patch:
+      summary: Update a test group
+      description: Update name, runMode, or prepTestId on a test group.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                runMode:
+                  type: string
+                  enum:
+                  - concurrent
+                  - sequential
+                prepTestId:
+                  type: string
+                  nullable: true
+                  format: uuid
+      responses:
+        '200':
+          description: Group updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: '#/components/schemas/GroupDetail'
+                required:
+                - group
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    delete:
+      summary: Delete a test group
+      description: Delete a non-default test group. The default group cannot be deleted.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      responses:
+        '200':
+          description: Group deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    enum:
+                    - true
+                  id:
+                    type: string
+                    format: uuid
+                required:
+                - deleted
+                - id
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/groups/{groupId}/tests:
+    post:
+      summary: Add a test to a group
+      description: 'Add an existing test to a test group. Returns 201 when a new membership row was created, or 200 with `added: false` when the test was already a member (idempotent).'
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                testId:
+                  type: string
+                  format: uuid
+              required:
+              - testId
+      responses:
+        '200':
+          description: Test was already a member; no change
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: string
+                    format: uuid
+                  testId:
+                    type: string
+                    format: uuid
+                  added:
+                    type: boolean
+                    enum:
+                    - false
+                required:
+                - groupId
+                - testId
+                - added
+        '201':
+          description: Test added to group
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: string
+                    format: uuid
+                  testId:
+                    type: string
+                    format: uuid
+                  added:
+                    type: boolean
+                    enum:
+                    - true
+                required:
+                - groupId
+                - testId
+                - added
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/groups/{groupId}/tests/{testId}:
+    delete:
+      summary: Remove a test from a group
+      description: Remove a test from a test group. Clears the group's prepTestId if it pointed at the removed test. `removed` is `true` when a membership row was deleted, `false` when the test was not a member (idempotent).
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      - schema:
+          type: string
+          format: uuid
+          description: Test ID
+        required: true
+        description: Test ID
+        name: testId
+        in: path
+      responses:
+        '200':
+          description: Idempotent removal result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: string
+                    format: uuid
+                  testId:
+                    type: string
+                    format: uuid
+                  removed:
+                    type: boolean
+                required:
+                - groupId
+                - testId
+                - removed
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/groups/{groupId}/runs:
+    post:
+      summary: Trigger a test group run
+      description: Trigger all runnable tests in a group using API-key authentication. Returns the batch ID plus `queuedRunIds` (runs accepted onto the worker) and `cancelledRunIds` (runs the server immediately cancelled, e.g. duplicates or quota cancellations). `status` is `queued` when at least one run is queued and `cancelled` when every run was rejected.
+      tags:
+      - Groups
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test group ID
+        required: true
+        description: Test group ID
+        name: groupId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platform:
+                  type: string
+                  enum:
+                  - web
+                  - ios
+                  - android
+                deviceModel:
+                  type: string
+                  enum:
+                  - iphone
+                  - ipad
+                  description: 'Mobile device variant within the run platform (iOS: iphone | ipad). Omit for the platform default phone-sized device; explicitly requesting the default (e.g. iphone) is equivalent to omitting it.'
+                projectEnvironmentId:
+                  type: string
+                  format: uuid
+                targetUrl:
+                  type: string
+                  format: uri
+                environment:
+                  type: string
+                  enum:
+                  - production
+                  - staging
+                  - preview
+                  - custom
+                mobile:
+                  type: object
+                  properties:
+                    appId:
+                      type: string
+                      format: uuid
+                    bundleId:
+                      type: string
+                      minLength: 1
+                    artifactUrl:
+                      type: string
+                      format: uri
+                    artifactFilename:
+                      type: string
+                      minLength: 1
+                    buildId:
+                      type: string
+                      minLength: 1
+                  additionalProperties: false
+                commitSha:
+                  type: string
+                  minLength: 1
+                prNumber:
+                  type: integer
+                  minimum: 0
+                  exclusiveMinimum: true
+      responses:
+        '202':
+          description: Group run queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                    - cancelled
+                  groupId:
+                    type: string
+                    format: uuid
+                  batchId:
+                    type: string
+                    format: uuid
+                  runIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  queuedRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  cancelledRunIds:
+                    type: array
+                    items:
+                      type: string
+                      format: uuid
+                  count:
+                    type: integer
+                  metadata:
+                    type: object
+                    properties:
+                      github:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          checkRunCreated:
+                            type: boolean
+                          commentTargetResolved:
+                            type: boolean
+                          status:
+                            type: string
+                            enum:
+                            - not_configured
+                            - check_create_failed
+                            - pr_not_found
+                        required:
+                        - configured
+                        - checkRunCreated
+                        - commentTargetResolved
+                    required:
+                    - github
+                required:
+                - status
+                - groupId
+                - batchId
+                - runIds
+                - queuedRunIds
+                - cancelledRunIds
+                - count
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Group not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+components:
+  schemas:
+    GroupDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        isDefault:
+          type: boolean
+        runMode:
+          type: string
+          enum:
+          - concurrent
+          - sequential
+        prepTestId:
+          type: string
+          nullable: true
+          format: uuid
+        projectId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+      - isDefault
+      - runMode
+      - prepTestId
+      - projectId
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API key authentication using Bearer token format

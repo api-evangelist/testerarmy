@@ -1,0 +1,983 @@
+openapi: 3.0.0
+info:
+  title: TestArmy Groups Tests API
+  version: 1.0.0
+  description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
+servers:
+- url: https://tester.army/api
+  description: Production API server
+tags:
+- name: Tests
+paths:
+  /v1/tests:
+    get:
+      summary: List tests
+      description: List tests for a project, optionally scoped to a test group. Use `cursor` for pagination; the response includes `nextCursor` when more pages exist.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          description: Project ID
+        required: true
+        description: Project ID
+        name: projectId
+        in: query
+      - schema:
+          type: string
+          format: uuid
+          description: Optional test group ID
+        required: false
+        description: Optional test group ID
+        name: groupId
+        in: query
+      - schema:
+          type: string
+          pattern: ^(?:[1-9]|[1-9][0-9]|100)$
+          description: Max results per page (default 50, max 100)
+        required: false
+        description: Max results per page (default 50, max 100)
+        name: limit
+        in: query
+      - schema:
+          type: string
+          description: Cursor for pagination
+        required: false
+        description: Cursor for pagination
+        name: cursor
+        in: query
+      responses:
+        '200':
+          description: List of tests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectUrl:
+                    type: string
+                    nullable: true
+                    format: uri
+                  projectName:
+                    type: string
+                  tests:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TestDefinition'
+                  nextCursor:
+                    type: string
+                    nullable: true
+                required:
+                - projectUrl
+                - projectName
+                - tests
+                - nextCursor
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    post:
+      summary: Create a test
+      description: Create a structured test definition for a project.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                description:
+                  type: string
+                steps:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TestStep'
+                  minItems: 1
+                  maxItems: 50
+                projectId:
+                  type: string
+                groupId:
+                  type: string
+                  nullable: true
+                  format: uuid
+                platform:
+                  type: string
+                  enum:
+                  - web
+                  - mobile
+                enabled:
+                  type: boolean
+              required:
+              - title
+              - steps
+              - projectId
+      responses:
+        '201':
+          description: Test created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test:
+                    $ref: '#/components/schemas/TestDefinition'
+                required:
+                - test
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/tests/{testId}:
+    get:
+      summary: Get a test
+      description: Get a single structured test definition, including the groups it belongs to.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test ID
+        required: true
+        description: Test ID
+        name: testId
+        in: path
+      responses:
+        '200':
+          description: Test details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestDetail'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '404':
+          description: Not Found - Resource does not exist or is not accessible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    patch:
+      summary: Update a test
+      description: Update a structured test definition.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test ID
+        required: true
+        description: Test ID
+        name: testId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                description:
+                  type: string
+                steps:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TestStep'
+                  minItems: 1
+                  maxItems: 50
+                enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: Test updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test:
+                    $ref: '#/components/schemas/TestDefinition'
+                required:
+                - test
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+    delete:
+      summary: Delete a test
+      description: Delete a structured test definition.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test ID
+        required: true
+        description: Test ID
+        name: testId
+        in: path
+      responses:
+        '200':
+          description: Test deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    enum:
+                    - true
+                  id:
+                    type: string
+                    format: uuid
+                required:
+                - deleted
+                - id
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+  /v1/tests/{testId}/runs:
+    post:
+      summary: Trigger a test run
+      description: Trigger a saved dashboard test remotely using API-key authentication. Returns the queued run ID.
+      tags:
+      - Tests
+      security:
+      - bearerAuth: []
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+          description: Test ID
+        required: true
+        description: Test ID
+        name: testId
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum:
+                  - fast
+                  - deep
+                platform:
+                  type: string
+                  enum:
+                  - web
+                  - ios
+                  - android
+                deviceModel:
+                  type: string
+                  enum:
+                  - iphone
+                  - ipad
+                  description: 'Mobile device variant within the run platform (iOS: iphone | ipad). Omit for the platform default phone-sized device; explicitly requesting the default (e.g. iphone) is equivalent to omitting it.'
+                appId:
+                  type: string
+                  format: uuid
+                projectEnvironmentId:
+                  type: string
+                  format: uuid
+      responses:
+        '202':
+          description: Test run queued successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                  runId:
+                    type: string
+                    format: uuid
+                  testId:
+                    type: string
+                    format: uuid
+                required:
+                - status
+                - runId
+                - testId
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '429':
+          description: Too Many Requests - Usage limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+        '504':
+          description: Gateway Timeout - Test execution exceeded time limit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error code or type
+                  message:
+                    type: string
+                    description: Human-readable error message
+                required:
+                - error
+                - message
+components:
+  schemas:
+    TestDetail:
+      allOf:
+      - $ref: '#/components/schemas/TestDefinition'
+      - type: object
+        properties:
+          groups:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                isDefault:
+                  type: boolean
+              required:
+              - id
+              - name
+              - isDefault
+    TestStep:
+      oneOf:
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - act
+        required:
+        - title
+        - type
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - assert
+        required:
+        - title
+        - type
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - login
+          credentialId:
+            type: string
+            format: uuid
+          temporaryEmail:
+            type: boolean
+        required:
+        - title
+        - type
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - files
+          fileIds:
+            type: array
+            items:
+              type: string
+              format: uuid
+        required:
+        - title
+        - type
+        - fileIds
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - screenshot
+        required:
+        - type
+      - type: object
+        properties:
+          title:
+            type: string
+          type:
+            type: string
+            enum:
+            - javascript
+          code:
+            type: string
+            description: 'JavaScript run in the browser page. Runs as an awaited function body; passes if it completes without throwing (returns nothing or { success: true }) and fails if it returns { success: false, reason } or throws. Web tests only.'
+        required:
+        - type
+        - code
+    TestDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        enabled:
+          type: boolean
+        platform:
+          type: string
+          enum:
+          - web
+          - mobile
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+        projectId:
+          type: string
+          format: uuid
+        projectUrl:
+          type: string
+          nullable: true
+          format: uri
+        projectName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - title
+      - steps
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API key authentication using Bearer token format
