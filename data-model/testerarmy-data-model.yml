@@ -1,0 +1,74 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/testerarmy-openapi-original.json
+entities:
+  - name: CredentialSummary
+    fields: ["id", "kind", "authMethod", "label", "username", "hasAuthInstructions", "createdAt"]
+  - name: DynamicPrRunRequest
+  - name: ErrorResponse
+    fields: ["error", "message"]
+  - name: GroupDetail
+    fields: ["id", "name", "isDefault", "runMode", "prepTestId", "projectId", "createdAt", "updatedAt"]
+  - name: Issue
+    fields: ["type", "name", "description", "url", "severity", "reproductionSteps", "expectedBehavior", "actualBehavior", "screenshotUrl", "tMs"]
+  - name: PlannerSkippedOutput
+    fields: ["kind", "reason"]
+  - name: ProjectDetail
+    fields: ["id", "shortId", "name", "url", "projectType", "description", "environments", "createdAt", "updatedAt"]
+  - name: ProjectEnvironment
+    fields: ["id", "name", "slug", "kind", "url"]
+  - name: ProjectFileSummary
+    fields: ["id", "projectId", "filename", "mediaType", "fileSize", "description", "summary", "createdAt"]
+  - name: ProjectMemory
+    fields: ["id", "category", "title", "content", "importance", "createdAt", "updatedAt"]
+  - name: ReusableActionStep
+    fields: ["order", "toolName", "summary", "target", "input"]
+  - name: ReusableActionTarget
+    fields: ["kind", "role", "name", "nth", "selector", "element"]
+  - name: ReusableActionTrace
+    fields: ["version", "stepKey", "stepTitle", "stepType", "actions", "confidence"]
+  - name: RunListResponse
+    fields: ["runs", "nextCursor"]
+  - name: RunResponse
+    fields: ["id", "type", "status", "platform", "deviceModel", "source", "projectId", "input", "output", "testPlan", "error", "durationMs", "webhookUrl", "webhookStatus", "testId", "stepResults", "userName", "externalRef", "executionMode", "autoRetryCount"]
+  - name: TestDefinition
+    fields: ["id", "title", "description", "enabled", "platform", "steps", "projectId", "projectUrl", "projectName", "createdAt", "updatedAt"]
+  - name: TestDetail
+  - name: TestOutput
+    fields: ["featureName", "result", "description", "issues", "screenshots", "steps"]
+  - name: TestOutputStep
+    fields: ["stepIndex", "title", "type", "status", "summary", "error", "errorCode", "startedAtMs", "completedAtMs", "reusableActionTrace"]
+  - name: TestStep
+relationships:
+  - from: Project
+    to: Test
+    kind: has_many
+    via: projectId
+  - from: Project
+    to: Environment
+    kind: has_many
+    via: projectId
+  - from: Project
+    to: Credential
+    kind: has_many
+    via: projectId
+  - from: Project
+    to: Memory
+    kind: has_many
+    via: projectId
+  - from: Project
+    to: MobileApp
+    kind: has_many
+    via: projectId
+  - from: Group
+    to: Test
+    kind: has_many
+    via: groupId
+  - from: Test
+    to: TestRun
+    kind: has_many
+    via: testId
+  - from: TestRun
+    to: Batch
+    kind: belongs_to
+    via: batchId

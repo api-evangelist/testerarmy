@@ -1,0 +1,16 @@
+generated: '2026-07-21'
+method: mixed
+skills:
+  - file: testerarmy-cli.md
+    name: TesterArmy CLI
+    method: searched
+    source: https://github.com/tester-army/cli
+    description: Official provider-published skill for the testerarmy/ta CLI (saved verbatim).
+  - file: testerarmy-create-and-run-test.md
+    name: Create and run a TesterArmy test
+    method: generated
+    api: openapi/testerarmy-openapi-original.json
+  - file: testerarmy-pull-request-run.md
+    name: Trigger a TesterArmy run from CI/CD
+    method: generated
+    api: openapi/testerarmy-openapi-original.json

@@ -1,0 +1,42 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.tester.army/cli
+name: testerarmy
+aliases: [ta]
+summary: >-
+  Agent-first control plane for the TesterArmy dashboard. Manages projects,
+  environments, credentials, memories and saved tests, and queues remote runs
+  that execute in TesterArmy cloud. Works standalone or as a skill for coding
+  agents (Claude Code, Codex, OpenCode).
+repository: https://github.com/tester-army/cli
+install:
+  - method: npm
+    command: npm install -g testerarmy
+  - method: npx
+    command: npx testerarmy --help
+authentication:
+  command: ta auth
+  api_key_flag: "ta auth --api-key YOUR_KEY"
+  env: TESTERARMY_API_KEY
+commands:
+  - group: auth
+    description: Authenticate the CLI with an API key
+  - group: projects
+    subcommands: [create, list, environments-create]
+    description: Manage projects and their environments
+  - group: memories
+    subcommands: [create, delete]
+    description: Manage project memories (context the agent uses when testing)
+  - group: tests
+    subcommands: [create, run]
+    flags: ["--wait", "--local", "--env <name>", "--json"]
+    description: Create tests and queue remote (or --local) runs
+flows:
+  - name: create-and-run
+    steps:
+      - ta auth
+      - ta projects create --json
+      - ta projects environments-create <projectId> --name Staging --url https://staging.example.com --json
+      - ta tests create --project <projectId> --json
+      - ta tests run <testId> --wait --json
+agent_skill: "npx skills add tester-army/cli"

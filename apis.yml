@@ -1,22 +1,159 @@
 aid: testerarmy
 name: Testerarmy
-description: Testerarmy is a company surfaced as a portfolio company of y-combinator and added to the
-  API Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  TesterArmy is an AI-powered QA testing platform (Y Combinator, batch P26) whose
+  browser and mobile agents test web and mobile apps like a real user - navigating
+  pages, filling forms, handling login, OAuth and OTP flows, and catching broken
+  flows, rendering bugs and confusing UX. You describe tests in plain English and
+  the agent runs them in the TesterArmy cloud (or locally), on every GitHub pull
+  request or on a schedule, returning screenshots, recordings and actionable bug
+  reports. It exposes a public REST API (bearer API-key auth), a first-party CLI
+  (testerarmy / ta), inbound trigger webhooks, and mobile app upload and testing.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://tester.army/logo.png
 url: https://raw.githubusercontent.com/api-evangelist/testerarmy/refs/heads/main/apis.yml
+humanURL: https://tester.army
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: active
+x-tier-reason: enriched-from-public-api
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- QA
+- Software Testing
+- Browser Automation
+- AI Agents
+- Developer Tools
+- CI/CD
+- End-to-End Testing
+- Mobile Testing
+apis:
+- aid: testerarmy:testerarmy-groups-api
+  name: Testerarmy Groups API
+  description: The Groups API from Testerarmy — 5 operation(s) for groups.
+  humanURL: https://docs.tester.army/api-reference
+  baseURL: https://tester.army/api/v1
+  tags:
+  - Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/testerarmy-groups-api-openapi.yml
+- aid: testerarmy:testerarmy-projects-api
+  name: Testerarmy Projects API
+  description: The Projects API from Testerarmy — 13 operation(s) for projects.
+  humanURL: https://docs.tester.army/api-reference
+  baseURL: https://tester.army/api/v1
+  tags:
+  - Projects
+  properties:
+  - type: OpenAPI
+    url: openapi/testerarmy-projects-api-openapi.yml
+- aid: testerarmy:testerarmy-test-runs-api
+  name: Testerarmy Test Runs API
+  description: The Test Runs API from Testerarmy — 5 operation(s) for test runs.
+  humanURL: https://docs.tester.army/api-reference
+  baseURL: https://tester.army/api/v1
+  tags:
+  - Test Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/testerarmy-test-runs-api-openapi.yml
+- aid: testerarmy:testerarmy-tests-api
+  name: Testerarmy Tests API
+  description: The Tests API from Testerarmy — 3 operation(s) for tests.
+  humanURL: https://docs.tester.army/api-reference
+  baseURL: https://tester.army/api/v1
+  tags:
+  - Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/testerarmy-tests-api-openapi.yml
+- aid: testerarmy:testerarmy-webhooks-api
+  name: Testerarmy Webhooks API
+  description: The Webhooks API from Testerarmy — 2 operation(s) for webhooks.
+  humanURL: https://docs.tester.army/api-reference
+  baseURL: https://tester.army/api/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/testerarmy-webhooks-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: DomainSecurity
+  url: security/testerarmy-domain-security.yml
+- type: Authentication
+  url: authentication/testerarmy-authentication.yml
+- type: ErrorCatalog
+  url: errors/testerarmy-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/testerarmy-lifecycle.yml
+- type: Conventions
+  url: conventions/testerarmy-conventions.yml
+- type: Conformance
+  url: conformance/testerarmy-conformance.yml
+- type: DataModel
+  url: data-model/testerarmy-data-model.yml
+- type: MCPServer
+  url: mcp/testerarmy-mcp.yml
+- type: WellKnown
+  url: well-known/testerarmy-well-known.yml
+- type: Packages
+  url: packages/testerarmy-packages.yml
+- type: SDKs
+  url: packages/testerarmy-packages.yml
+- type: CLI
+  url: cli/testerarmy-cli.yml
+- type: Sandbox
+  url: sandbox/testerarmy-sandbox.yml
+- type: Webhooks
+  url: asyncapi/testerarmy-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/testerarmy-llms.txt
+- type: DeveloperPortal
+  url: https://docs.tester.army/
+- type: Documentation
+  url: https://docs.tester.army/
+- type: APIReference
+  url: https://docs.tester.army/api-reference
+- type: GettingStarted
+  url: https://docs.tester.army/get-started/quick-start
+- type: Pricing
+  url: https://tester.army/pricing
+- type: Blog
+  url: https://tester.army/blog
+- type: GitHubOrganization
+  url: https://github.com/tester-army
+- type: Support
+  url: https://tester.army/discord
+- type: TermsOfService
+  url: https://tester.army/terms
+- type: PrivacyPolicy
+  url: https://tester.army/privacy
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 21
+  pass: local-v1

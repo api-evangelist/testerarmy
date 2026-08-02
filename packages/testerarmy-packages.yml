@@ -1,0 +1,23 @@
+generated: '2026-07-21'
+method: searched
+source: https://www.npmjs.com/package/testerarmy
+packages:
+  - language: javascript
+    registry: npm
+    name: testerarmy
+    url: https://www.npmjs.com/package/testerarmy
+    install: npm install -g testerarmy
+    official: true
+    description: >-
+      Official TesterArmy CLI (binary `testerarmy`, alias `ta`) - an agent-first
+      control plane for managing projects, environments, credentials, tests and
+      queuing remote runs in the TesterArmy cloud.
+    repository: https://github.com/tester-army/cli
+  - language: javascript
+    registry: npm
+    name: "@testerarmy/scout"
+    url: https://www.npmjs.com/package/@testerarmy/scout
+    install: npm install @testerarmy/scout
+    official: true
+    description: Safe API exploration harness for coding agents - tools for testing APIs with AI agents.
+    repository: https://github.com/tester-army/scout

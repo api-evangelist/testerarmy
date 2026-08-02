@@ -1,0 +1,21 @@
+generated: '2026-07-21'
+method: searched
+source: https://tester.army/api/v1/openapi.json
+docs: https://docs.tester.army/api-reference
+summary:
+  types: [http]
+  http_schemes: [bearer]
+  api_key_in: [header]
+  oauth2_flows: []
+  notes: >-
+    TesterArmy uses API-key authentication passed as an HTTP Bearer token
+    (Authorization: Bearer <API_KEY>). API keys are created in the dashboard.
+    No OAuth2/OIDC surface is exposed by the public API.
+schemes:
+  - name: bearerAuth
+    type: http
+    scheme: bearer
+    bearerFormat: API Key
+    description: API key authentication using Bearer token format
+    location: header (Authorization)
+    sources: [openapi/testerarmy-openapi-original.json]

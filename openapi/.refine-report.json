@@ -1,0 +1,22 @@
+{
+  "provider": "testerarmy",
+  "sources": [
+    "testerarmy-groups-api-openapi.yml",
+    "testerarmy-projects-api-openapi.yml",
+    "testerarmy-test-runs-api-openapi.yml",
+    "testerarmy-tests-api-openapi.yml",
+    "testerarmy-webhooks-api-openapi.yml"
+  ],
+  "outputs": [
+    "testerarmy-groups-api-openapi.yml",
+    "testerarmy-projects-api-openapi.yml",
+    "testerarmy-test-runs-api-openapi.yml",
+    "testerarmy-tests-api-openapi.yml",
+    "testerarmy-webhooks-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

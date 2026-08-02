@@ -1,0 +1,29 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/testerarmy-openapi-original.json
+authentication:
+  style: bearer-api-key
+  header: 'Authorization: Bearer <API_KEY>'
+  ref: authentication/testerarmy-authentication.yml
+idempotency:
+  supported: false
+  notes: >-
+    No documented Idempotency-Key header was detected in the OpenAPI. Run-trigger
+    endpoints are POST actions; treat retries as potentially duplicative until the
+    provider documents an idempotency contract.
+pagination:
+  detected_params: ["cursor", "limit"]
+  style: query-params
+rate_limiting:
+  signaled: true
+  evidence: Every operation documents a 429 Too Many Requests response.
+  ref: errors/testerarmy-problem-types.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  ref: lifecycle/testerarmy-lifecycle.yml
+error_envelope:
+  ref: errors/testerarmy-problem-types.yml
+webhooks:
+  supported: true
+  notes: Project and group webhooks triggered via POST /v1/webhook/{webhookId}/{secret} and /v1/groups/webhook/{webhookId}/{secret}.

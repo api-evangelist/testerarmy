@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.tester.army/run/group-webhooks
+spec_type: Webhooks
+summary: >-
+  TesterArmy exposes inbound trigger webhooks (call these URLs from your CI/CD to
+  start runs) and outbound notification integrations that deliver run results.
+inbound_triggers:
+  - operation: POST /v1/webhook/{webhookId}/{secret}
+    description: Trigger a project webhook (start a run for a project).
+  - operation: POST /v1/groups/webhook/{webhookId}/{secret}
+    description: Trigger a group webhook (start a run for a test group).
+    docs: https://docs.tester.army/run/group-webhooks
+outbound_notifications:
+  - channel: Slack
+    docs: https://docs.tester.army/integrations/slack
+  - channel: Discord
+    docs: https://docs.tester.army/integrations/discord
+  - channel: Email
+    docs: https://docs.tester.army/integrations/email
+  - channel: GitHub PR checks
+    docs: https://docs.tester.army/integrations/github
+asyncapi_document: null
+notes: No published AsyncAPI document; webhook surface documented in prose + OpenAPI trigger operations.

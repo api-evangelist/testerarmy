@@ -1,0 +1,37 @@
+# TesterArmy
+
+> Automated QA testing platform for web apps. AI agents test your website like a human — navigating pages, filling forms, clicking buttons, and catching regressions.
+
+## What is TesterArmy?
+
+TesterArmy is a QA testing platform that uses AI-powered browser agents to test web applications. Instead of writing test scripts, you describe what to test in plain English. The agent launches a real browser, interacts with your site like a human user, and produces screenshots, recordings, and pass/fail verdicts.
+
+## Key Features
+
+- **AI Browser Agents**: Real browser automation that navigates, clicks, types, and validates like a human
+- **PR Checks**: Automatically test every GitHub deployment before merge
+- **Plain English Tests**: Describe tests in natural language, no code required
+- **Authentication Support**: Handles login flows, OAuth, and OTP verification
+- **CLI & Dashboard**: Run tests from terminal or web interface
+- **Screenshots & Recordings**: Visual evidence for every test run
+
+## Key Pages
+
+- [Homepage](https://tester.army/)
+- [Pricing](https://tester.army/pricing)
+- [Documentation](https://docs.tester.army/)
+- [Blog](https://tester.army/blog)
+- [Quick Start Guide](https://docs.tester.army/get-started/quick-start)
+
+## Documentation (LLM-friendly)
+
+- [Docs Index](https://docs.tester.army/llms.txt): List of all documentation pages
+- [Full Docs](https://docs.tester.army/llms-full.txt): Complete documentation in markdown
+
+## Contact
+
+- Website: https://tester.army/
+- Email: hello@tester.army
+- Twitter: https://x.com/TesterArmy
+- LinkedIn: https://www.linkedin.com/company/testerarmy
+- Discord: https://tester.army/discord

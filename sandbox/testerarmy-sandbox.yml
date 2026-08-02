@@ -1,0 +1,27 @@
+generated: '2026-07-21'
+method: searched
+source: https://docs.tester.army/auth/credentials
+summary: >-
+  TesterArmy does not use test-vs-live API key prefixes; instead it provisions
+  ephemeral test identities so agents can complete login/OTP flows against your
+  own app. Runs execute against project environments (e.g. Staging) you register.
+test_helpers:
+  - name: Test Credentials
+    docs: https://docs.tester.army/auth/credentials
+    description: Store credentials (username/password) the agent uses to log into the app under test.
+  - name: Agent Mail Inboxes
+    docs: https://docs.tester.army/auth/agent-mail-inboxes
+    description: Disposable email inboxes the agent can read to complete email verification / magic-link flows.
+  - name: SMS Phone Numbers
+    docs: https://docs.tester.army/auth/sms-phone-numbers
+    description: Provisioned phone numbers the agent can read to complete SMS OTP flows.
+  - name: HTTP Basic Auth / Custom Headers
+    docs: https://docs.tester.army/auth/basic-auth
+    description: Attach basic-auth or custom headers to reach protected staging environments.
+  - name: Cloudflare Zero Trust / Vercel Preview
+    docs: https://docs.tester.army/auth/cloudflare-zero-trust
+    description: Bypass access controls on preview/staging deployments.
+environments:
+  concept: Register named environments (Staging, Production) per project with their URL.
+  docs: https://docs.tester.army/guides/environments
+notes: No fabricated test card/token values - TesterArmy is a QA-agent platform, not a payments API.

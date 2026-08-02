@@ -1,0 +1,134 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for TesterArmy
+  version: 1.0.0
+extends: openapi/testerarmy-openapi-original.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-enriched: true
+      x-apievangelist-enriched-date: '2026-07-21'
+      x-api-key-auth: bearer
+  - target: "$.paths['/v1/projects'].get"
+    update:
+      x-suggested-operationId: getProjects
+  - target: "$.paths['/v1/projects'].post"
+    update:
+      x-suggested-operationId: createProjects
+  - target: "$.paths['/v1/projects/{projectId}'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectId
+  - target: "$.paths['/v1/projects/{projectId}'].patch"
+    update:
+      x-suggested-operationId: updateProjectsByProjectId
+  - target: "$.paths['/v1/projects/{projectId}'].delete"
+    update:
+      x-suggested-operationId: deleteProjectsByProjectId
+  - target: "$.paths['/v1/projects/{projectId}/pull-request-runs'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdPull-request-runs
+  - target: "$.paths['/v1/projects/{projectId}/environments'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectIdEnvironments
+  - target: "$.paths['/v1/projects/{projectId}/environments'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdEnvironments
+  - target: "$.paths['/v1/projects/{projectId}/environments/{environmentId}'].delete"
+    update:
+      x-suggested-operationId: deleteProjectsByProjectIdEnvironmentsByEnvironmentId
+  - target: "$.paths['/v1/projects/{projectId}/credentials'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectIdCredentials
+  - target: "$.paths['/v1/projects/{projectId}/credentials'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdCredentials
+  - target: "$.paths['/v1/projects/{projectId}/memories'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectIdMemories
+  - target: "$.paths['/v1/projects/{projectId}/memories'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdMemories
+  - target: "$.paths['/v1/projects/{projectId}/memories/{memoryId}'].delete"
+    update:
+      x-suggested-operationId: deleteProjectsByProjectIdMemoriesByMemoryId
+  - target: "$.paths['/v1/projects/{projectId}/files'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectIdFiles
+  - target: "$.paths['/v1/projects/{projectId}/mobile'].get"
+    update:
+      x-suggested-operationId: getProjectsByProjectIdMobile
+  - target: "$.paths['/v1/projects/{projectId}/mobile'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdMobile
+  - target: "$.paths['/v1/projects/{projectId}/mobile/{appId}'].delete"
+    update:
+      x-suggested-operationId: deleteProjectsByProjectIdMobileByAppId
+  - target: "$.paths['/v1/projects/{projectId}/mobile/upload'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdMobileUpload
+  - target: "$.paths['/v1/projects/{projectId}/mobile/upload/confirm'].post"
+    update:
+      x-suggested-operationId: createProjectsByProjectIdMobileUploadConfirm
+  - target: "$.paths['/v1/tests'].get"
+    update:
+      x-suggested-operationId: getTests
+  - target: "$.paths['/v1/tests'].post"
+    update:
+      x-suggested-operationId: createTests
+  - target: "$.paths['/v1/tests/{testId}'].get"
+    update:
+      x-suggested-operationId: getTestsByTestId
+  - target: "$.paths['/v1/tests/{testId}'].patch"
+    update:
+      x-suggested-operationId: updateTestsByTestId
+  - target: "$.paths['/v1/tests/{testId}'].delete"
+    update:
+      x-suggested-operationId: deleteTestsByTestId
+  - target: "$.paths['/v1/tests/{testId}/runs'].post"
+    update:
+      x-suggested-operationId: createTestsByTestIdRuns
+  - target: "$.paths['/v1/groups'].get"
+    update:
+      x-suggested-operationId: getGroups
+  - target: "$.paths['/v1/groups'].post"
+    update:
+      x-suggested-operationId: createGroups
+  - target: "$.paths['/v1/groups/{groupId}'].get"
+    update:
+      x-suggested-operationId: getGroupsByGroupId
+  - target: "$.paths['/v1/groups/{groupId}'].patch"
+    update:
+      x-suggested-operationId: updateGroupsByGroupId
+  - target: "$.paths['/v1/groups/{groupId}'].delete"
+    update:
+      x-suggested-operationId: deleteGroupsByGroupId
+  - target: "$.paths['/v1/groups/{groupId}/tests'].post"
+    update:
+      x-suggested-operationId: createGroupsByGroupIdTests
+  - target: "$.paths['/v1/groups/{groupId}/tests/{testId}'].delete"
+    update:
+      x-suggested-operationId: deleteGroupsByGroupIdTestsByTestId
+  - target: "$.paths['/v1/groups/{groupId}/runs'].post"
+    update:
+      x-suggested-operationId: createGroupsByGroupIdRuns
+  - target: "$.paths['/v1/webhook/{webhookId}/{secret}'].post"
+    update:
+      x-suggested-operationId: createWebhookByWebhookIdBySecret
+  - target: "$.paths['/v1/groups/webhook/{webhookId}/{secret}'].post"
+    update:
+      x-suggested-operationId: createGroupsWebhookByWebhookIdBySecret
+  - target: "$.paths['/v1/runs'].get"
+    update:
+      x-suggested-operationId: getRuns
+  - target: "$.paths['/v1/runs/{id}'].get"
+    update:
+      x-suggested-operationId: getRunsById
+  - target: "$.paths['/v1/runs/{id}/cancel'].post"
+    update:
+      x-suggested-operationId: createRunsByIdCancel
+  - target: "$.paths['/v1/batches/{batchId}/cancel'].post"
+    update:
+      x-suggested-operationId: createBatchesByBatchIdCancel
+  - target: "$.paths['/v1/batches/{batchId}/rerun'].post"
+    update:
+      x-suggested-operationId: createBatchesByBatchIdRerun

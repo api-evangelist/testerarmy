@@ -1,0 +1,42 @@
+generated: '2026-07-21'
+method: derived
+source: openapi/testerarmy-openapi-original.json
+format: json
+error_content_types: ["application/json"]
+problems:
+  - status: 400
+    title: Bad Request
+    remediation: Validate the request body and parameters against the schema.
+    seen_on: ["GET /v1/projects", "POST /v1/projects", "GET /v1/projects/{projectId}"]
+  - status: 401
+    title: Unauthorized
+    remediation: "Provide a valid API key via Authorization: Bearer <API_KEY>."
+    seen_on: ["GET /v1/projects", "POST /v1/projects", "GET /v1/projects/{projectId}"]
+  - status: 403
+    title: Forbidden
+    remediation: The API key lacks permission or the plan quota is exceeded.
+    seen_on: ["POST /v1/projects"]
+  - status: 404
+    title: Not Found
+    remediation: Confirm the resource id exists and belongs to your organization.
+    seen_on: ["GET /v1/projects/{projectId}", "POST /v1/projects/{projectId}/pull-request-runs", "GET /v1/projects/{projectId}/environments"]
+  - status: 409
+    title: Conflict
+    remediation: Resource already exists or conflicts with current state; reconcile before retrying.
+    seen_on: ["POST /v1/projects/{projectId}/environments", "POST /v1/projects/{projectId}/memories", "POST /v1/runs/{id}/cancel"]
+  - status: 413
+    title: Payload Too Large
+    remediation: Reduce the upload/payload size (e.g. mobile app build too large).
+    seen_on: ["POST /v1/projects/{projectId}/pull-request-runs"]
+  - status: 429
+    title: Too Many Requests
+    remediation: Rate limit exceeded; back off and honor Retry-After.
+    seen_on: ["GET /v1/projects", "POST /v1/projects", "GET /v1/projects/{projectId}"]
+  - status: 500
+    title: Internal Server Error
+    remediation: Transient server error; retry with exponential backoff.
+    seen_on: ["GET /v1/projects", "POST /v1/projects", "GET /v1/projects/{projectId}"]
+  - status: 504
+    title: Gateway Timeout
+    remediation: Upstream/gateway timeout; retry the request.
+    seen_on: ["GET /v1/projects", "POST /v1/projects", "GET /v1/projects/{projectId}"]
