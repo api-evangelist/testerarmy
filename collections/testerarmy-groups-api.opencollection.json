@@ -1,0 +1,216 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TestArmy Groups API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Groups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List test groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/groups",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "query",
+                "description": "Project ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List test groups for a project. The default All Tests group is always returned and new tests are added to it at creation time."
+        },
+        {
+          "info": {
+            "name": "Create a test group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/groups",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a test group in a project. Capped at 20 groups per project."
+        },
+        {
+          "info": {
+            "name": "Get a test group",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/groups/:groupId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a single test group by ID."
+        },
+        {
+          "info": {
+            "name": "Update a test group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://tester.army/api/v1/groups/:groupId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update name, runMode, or prepTestId on a test group."
+        },
+        {
+          "info": {
+            "name": "Delete a test group",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/groups/:groupId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a non-default test group. The default group cannot be deleted."
+        },
+        {
+          "info": {
+            "name": "Add a test to a group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/groups/:groupId/tests",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Add an existing test to a test group. Returns 201 when a new membership row was created, or 200 with `added: false` when the test was already a member (idempotent)."
+        },
+        {
+          "info": {
+            "name": "Remove a test from a group",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/groups/:groupId/tests/:testId",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              },
+              {
+                "name": "testId",
+                "value": "",
+                "type": "path",
+                "description": "Test ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Remove a test from a test group. Clears the group's prepTestId if it pointed at the removed test. `removed` is `true` when a membership row was deleted, `false` when the test was not a member (idempotent)."
+        },
+        {
+          "info": {
+            "name": "Trigger a test group run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/groups/:groupId/runs",
+            "params": [
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "path",
+                "description": "Test group ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger all runnable tests in a group using API-key authentication. Returns the batch ID plus `queuedRunIds` (runs accepted onto the worker) and `cancelledRunIds` (runs the server immediately cancelled, e.g. duplicates or quota cancellations). `status` is `queued` when at least one run is queued and `cancelled` when every run was rejected."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

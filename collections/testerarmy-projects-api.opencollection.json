@@ -1,0 +1,527 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TestArmy Groups Projects API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Projects",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List projects",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List projects available to the authenticated API key's team."
+        },
+        {
+          "info": {
+            "name": "Create a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a project for the authenticated API key's team."
+        },
+        {
+          "info": {
+            "name": "Get a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a single project by ID or shortId."
+        },
+        {
+          "info": {
+            "name": "Update a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://tester.army/api/v1/projects/:projectId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update project name, URL, or description."
+        },
+        {
+          "info": {
+            "name": "Delete a project",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/projects/:projectId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a project. Cascades to groups, tests, runs, and associated artifacts."
+        },
+        {
+          "info": {
+            "name": "Trigger a dynamic pull request run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/pull-request-runs",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger the dynamic PR agent from CI using PR metadata. Callers do not send changed files; TesterArmy enriches with changed files and GitHub reporting only when the project has a supported GitHub connection."
+        },
+        {
+          "info": {
+            "name": "List project environments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId/environments",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List all run environments for a project, including built-in Production and PR Preview plus static environments."
+        },
+        {
+          "info": {
+            "name": "Create a project environment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/environments",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a static project environment with a stable HTTPS URL. Built-in Production and PR Preview environments are managed by TesterArmy."
+        },
+        {
+          "info": {
+            "name": "Delete a project environment",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/projects/:projectId/environments/:environmentId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              },
+              {
+                "name": "environmentId",
+                "value": "",
+                "type": "path",
+                "description": "Static environment ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a static project environment. Built-in Production and PR Preview environments are not deletable."
+        },
+        {
+          "info": {
+            "name": "List project credentials",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId/credentials",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List credentials for a project. Passwords are not returned."
+        },
+        {
+          "info": {
+            "name": "Create a project credential",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/credentials",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a login or inbox credential for a project. Passwords are not returned."
+        },
+        {
+          "info": {
+            "name": "List project memories",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId/memories",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List manual project memories used as context for dashboard tests and agents."
+        },
+        {
+          "info": {
+            "name": "Create a project memory",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/memories",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a manual project memory that agents can use as project context."
+        },
+        {
+          "info": {
+            "name": "Delete a project memory",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/projects/:projectId/memories/:memoryId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID or shortId"
+              },
+              {
+                "name": "memoryId",
+                "value": "",
+                "type": "path",
+                "description": "Memory ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a manual project memory used as agent context."
+        },
+        {
+          "info": {
+            "name": "List project files",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId/files",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List uploaded files for a project."
+        },
+        {
+          "info": {
+            "name": "List project mobile apps",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/projects/:projectId/mobile",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List uploaded mobile apps for a mobile project."
+        },
+        {
+          "info": {
+            "name": "Upload a project mobile app",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/mobile",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "removeAfter",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Upload a mobile app binary to a mobile project. Optionally set removeAfter to delete temporary uploads after a delay."
+        },
+        {
+          "info": {
+            "name": "Delete a project mobile app",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/projects/:projectId/mobile/:appId",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              },
+              {
+                "name": "appId",
+                "value": "",
+                "type": "path",
+                "description": "Mobile app ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a previously uploaded mobile app from a mobile project."
+        },
+        {
+          "info": {
+            "name": "Initiate a project mobile app upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/mobile/upload",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a presigned temporary upload for a mobile app binary."
+        },
+        {
+          "info": {
+            "name": "Confirm a project mobile app upload",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/projects/:projectId/mobile/upload/confirm",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "path",
+                "description": "Project ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Validate a completed temporary upload and promote it into project storage."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

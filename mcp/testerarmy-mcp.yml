@@ -6,135 +6,138 @@ server:
   name: testerarmy-docs
   transport: http
   url: https://docs.tester.army/_mcp/server
-  description: >-
-    Official hosted MCP server for TesterArmy documentation (Claude Code, Cursor, etc.).
-    It serves docs/search; it is not a wrapper of the REST API.
+  description: Official hosted MCP server for TesterArmy documentation (Claude Code, Cursor, etc.). It
+    serves docs/search; it is not a wrapper of the REST API.
   http_status: 200
 api_tools_candidate:
-  note: >-
-    Candidate tool list derived one-per-operation from the public OpenAPI. No official
-    hosted MCP server wrapping the REST API was found; these are suggestions.
+  note: Candidate tool list derived one-per-operation from the public OpenAPI. No official hosted MCP
+    server wrapping the REST API was found; these are suggestions.
   tools:
-    - name: getProjects
-      description: List projects
-      source_operation: GET /v1/projects
-    - name: createProjects
-      description: Create a project
-      source_operation: POST /v1/projects
-    - name: getProjectsByProjectId
-      description: Get a project
-      source_operation: GET /v1/projects/{projectId}
-    - name: updateProjectsByProjectId
-      description: Update a project
-      source_operation: PATCH /v1/projects/{projectId}
-    - name: deleteProjectsByProjectId
-      description: Delete a project
-      source_operation: DELETE /v1/projects/{projectId}
-    - name: createProjectsByProjectIdPull-request-runs
-      description: Trigger a dynamic pull request run
-      source_operation: POST /v1/projects/{projectId}/pull-request-runs
-    - name: getProjectsByProjectIdEnvironments
-      description: List project environments
-      source_operation: GET /v1/projects/{projectId}/environments
-    - name: createProjectsByProjectIdEnvironments
-      description: Create a project environment
-      source_operation: POST /v1/projects/{projectId}/environments
-    - name: deleteProjectsByProjectIdEnvironmentsByEnvironmentId
-      description: Delete a project environment
-      source_operation: DELETE /v1/projects/{projectId}/environments/{environmentId}
-    - name: getProjectsByProjectIdCredentials
-      description: List project credentials
-      source_operation: GET /v1/projects/{projectId}/credentials
-    - name: createProjectsByProjectIdCredentials
-      description: Create a project credential
-      source_operation: POST /v1/projects/{projectId}/credentials
-    - name: getProjectsByProjectIdMemories
-      description: List project memories
-      source_operation: GET /v1/projects/{projectId}/memories
-    - name: createProjectsByProjectIdMemories
-      description: Create a project memory
-      source_operation: POST /v1/projects/{projectId}/memories
-    - name: deleteProjectsByProjectIdMemoriesByMemoryId
-      description: Delete a project memory
-      source_operation: DELETE /v1/projects/{projectId}/memories/{memoryId}
-    - name: getProjectsByProjectIdFiles
-      description: List project files
-      source_operation: GET /v1/projects/{projectId}/files
-    - name: getProjectsByProjectIdMobile
-      description: List project mobile apps
-      source_operation: GET /v1/projects/{projectId}/mobile
-    - name: createProjectsByProjectIdMobile
-      description: Upload a project mobile app
-      source_operation: POST /v1/projects/{projectId}/mobile
-    - name: deleteProjectsByProjectIdMobileByAppId
-      description: Delete a project mobile app
-      source_operation: DELETE /v1/projects/{projectId}/mobile/{appId}
-    - name: createProjectsByProjectIdMobileUpload
-      description: Initiate a project mobile app upload
-      source_operation: POST /v1/projects/{projectId}/mobile/upload
-    - name: createProjectsByProjectIdMobileUploadConfirm
-      description: Confirm a project mobile app upload
-      source_operation: POST /v1/projects/{projectId}/mobile/upload/confirm
-    - name: getTests
-      description: List tests
-      source_operation: GET /v1/tests
-    - name: createTests
-      description: Create a test
-      source_operation: POST /v1/tests
-    - name: getTestsByTestId
-      description: Get a test
-      source_operation: GET /v1/tests/{testId}
-    - name: updateTestsByTestId
-      description: Update a test
-      source_operation: PATCH /v1/tests/{testId}
-    - name: deleteTestsByTestId
-      description: Delete a test
-      source_operation: DELETE /v1/tests/{testId}
-    - name: createTestsByTestIdRuns
-      description: Trigger a test run
-      source_operation: POST /v1/tests/{testId}/runs
-    - name: getGroups
-      description: List test groups
-      source_operation: GET /v1/groups
-    - name: createGroups
-      description: Create a test group
-      source_operation: POST /v1/groups
-    - name: getGroupsByGroupId
-      description: Get a test group
-      source_operation: GET /v1/groups/{groupId}
-    - name: updateGroupsByGroupId
-      description: Update a test group
-      source_operation: PATCH /v1/groups/{groupId}
-    - name: deleteGroupsByGroupId
-      description: Delete a test group
-      source_operation: DELETE /v1/groups/{groupId}
-    - name: createGroupsByGroupIdTests
-      description: Add a test to a group
-      source_operation: POST /v1/groups/{groupId}/tests
-    - name: deleteGroupsByGroupIdTestsByTestId
-      description: Remove a test from a group
-      source_operation: DELETE /v1/groups/{groupId}/tests/{testId}
-    - name: createGroupsByGroupIdRuns
-      description: Trigger a test group run
-      source_operation: POST /v1/groups/{groupId}/runs
-    - name: createWebhookByWebhookIdBySecret
-      description: Trigger a project webhook
-      source_operation: POST /v1/webhook/{webhookId}/{secret}
-    - name: createGroupsWebhookByWebhookIdBySecret
-      description: Trigger a group webhook
-      source_operation: POST /v1/groups/webhook/{webhookId}/{secret}
-    - name: getRuns
-      description: List test runs
-      source_operation: GET /v1/runs
-    - name: getRunsById
-      description: Get test run status
-      source_operation: GET /v1/runs/{id}
-    - name: createRunsByIdCancel
-      description: Cancel a queued or running run
-      source_operation: POST /v1/runs/{id}/cancel
-    - name: createBatchesByBatchIdCancel
-      description: Cancel a queued or running batch
-      source_operation: POST /v1/batches/{batchId}/cancel
-    - name: createBatchesByBatchIdRerun
-      description: Re-run a batch
-      source_operation: POST /v1/batches/{batchId}/rerun
+  - name: getProjects
+    description: List projects
+    source_operation: GET /v1/projects
+  - name: createProjects
+    description: Create a project
+    source_operation: POST /v1/projects
+  - name: getProjectsByProjectId
+    description: Get a project
+    source_operation: GET /v1/projects/{projectId}
+  - name: updateProjectsByProjectId
+    description: Update a project
+    source_operation: PATCH /v1/projects/{projectId}
+  - name: deleteProjectsByProjectId
+    description: Delete a project
+    source_operation: DELETE /v1/projects/{projectId}
+  - name: createProjectsByProjectIdPull-request-runs
+    description: Trigger a dynamic pull request run
+    source_operation: POST /v1/projects/{projectId}/pull-request-runs
+  - name: getProjectsByProjectIdEnvironments
+    description: List project environments
+    source_operation: GET /v1/projects/{projectId}/environments
+  - name: createProjectsByProjectIdEnvironments
+    description: Create a project environment
+    source_operation: POST /v1/projects/{projectId}/environments
+  - name: deleteProjectsByProjectIdEnvironmentsByEnvironmentId
+    description: Delete a project environment
+    source_operation: DELETE /v1/projects/{projectId}/environments/{environmentId}
+  - name: getProjectsByProjectIdCredentials
+    description: List project credentials
+    source_operation: GET /v1/projects/{projectId}/credentials
+  - name: createProjectsByProjectIdCredentials
+    description: Create a project credential
+    source_operation: POST /v1/projects/{projectId}/credentials
+  - name: getProjectsByProjectIdMemories
+    description: List project memories
+    source_operation: GET /v1/projects/{projectId}/memories
+  - name: createProjectsByProjectIdMemories
+    description: Create a project memory
+    source_operation: POST /v1/projects/{projectId}/memories
+  - name: deleteProjectsByProjectIdMemoriesByMemoryId
+    description: Delete a project memory
+    source_operation: DELETE /v1/projects/{projectId}/memories/{memoryId}
+  - name: getProjectsByProjectIdFiles
+    description: List project files
+    source_operation: GET /v1/projects/{projectId}/files
+  - name: getProjectsByProjectIdMobile
+    description: List project mobile apps
+    source_operation: GET /v1/projects/{projectId}/mobile
+  - name: createProjectsByProjectIdMobile
+    description: Upload a project mobile app
+    source_operation: POST /v1/projects/{projectId}/mobile
+  - name: deleteProjectsByProjectIdMobileByAppId
+    description: Delete a project mobile app
+    source_operation: DELETE /v1/projects/{projectId}/mobile/{appId}
+  - name: createProjectsByProjectIdMobileUpload
+    description: Initiate a project mobile app upload
+    source_operation: POST /v1/projects/{projectId}/mobile/upload
+  - name: createProjectsByProjectIdMobileUploadConfirm
+    description: Confirm a project mobile app upload
+    source_operation: POST /v1/projects/{projectId}/mobile/upload/confirm
+  - name: getTests
+    description: List tests
+    source_operation: GET /v1/tests
+  - name: createTests
+    description: Create a test
+    source_operation: POST /v1/tests
+  - name: getTestsByTestId
+    description: Get a test
+    source_operation: GET /v1/tests/{testId}
+  - name: updateTestsByTestId
+    description: Update a test
+    source_operation: PATCH /v1/tests/{testId}
+  - name: deleteTestsByTestId
+    description: Delete a test
+    source_operation: DELETE /v1/tests/{testId}
+  - name: createTestsByTestIdRuns
+    description: Trigger a test run
+    source_operation: POST /v1/tests/{testId}/runs
+  - name: getGroups
+    description: List test groups
+    source_operation: GET /v1/groups
+  - name: createGroups
+    description: Create a test group
+    source_operation: POST /v1/groups
+  - name: getGroupsByGroupId
+    description: Get a test group
+    source_operation: GET /v1/groups/{groupId}
+  - name: updateGroupsByGroupId
+    description: Update a test group
+    source_operation: PATCH /v1/groups/{groupId}
+  - name: deleteGroupsByGroupId
+    description: Delete a test group
+    source_operation: DELETE /v1/groups/{groupId}
+  - name: createGroupsByGroupIdTests
+    description: Add a test to a group
+    source_operation: POST /v1/groups/{groupId}/tests
+  - name: deleteGroupsByGroupIdTestsByTestId
+    description: Remove a test from a group
+    source_operation: DELETE /v1/groups/{groupId}/tests/{testId}
+  - name: createGroupsByGroupIdRuns
+    description: Trigger a test group run
+    source_operation: POST /v1/groups/{groupId}/runs
+  - name: createWebhookByWebhookIdBySecret
+    description: Trigger a project webhook
+    source_operation: POST /v1/webhook/{webhookId}/{secret}
+  - name: createGroupsWebhookByWebhookIdBySecret
+    description: Trigger a group webhook
+    source_operation: POST /v1/groups/webhook/{webhookId}/{secret}
+  - name: getRuns
+    description: List test runs
+    source_operation: GET /v1/runs
+  - name: getRunsById
+    description: Get test run status
+    source_operation: GET /v1/runs/{id}
+  - name: createRunsByIdCancel
+    description: Cancel a queued or running run
+    source_operation: POST /v1/runs/{id}/cancel
+  - name: createBatchesByBatchIdCancel
+    description: Cancel a queued or running batch
+    source_operation: POST /v1/batches/{batchId}/cancel
+  - name: createBatchesByBatchIdRerun
+    description: Re-run a batch
+    source_operation: POST /v1/batches/{batchId}/rerun
+deployment:
+  mode: remote
+  verified: searched
+  checked: '2026-08-12'
+  source: catalog MCP census

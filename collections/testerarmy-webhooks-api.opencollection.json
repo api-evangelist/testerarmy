@@ -1,0 +1,76 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TestArmy Groups Webhooks API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Webhooks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger a project webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/webhook/:webhookId/:secret",
+            "params": [
+              {
+                "name": "webhookId",
+                "value": "",
+                "type": "path",
+                "description": "Webhook ID"
+              },
+              {
+                "name": "secret",
+                "value": "",
+                "type": "path",
+                "description": "Webhook secret"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Receive a deployment webhook and trigger PR testing when configured."
+        },
+        {
+          "info": {
+            "name": "Trigger a group webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/groups/webhook/:webhookId/:secret",
+            "params": [
+              {
+                "name": "webhookId",
+                "value": "",
+                "type": "path",
+                "description": "Webhook ID"
+              },
+              {
+                "name": "secret",
+                "value": "",
+                "type": "path",
+                "description": "Webhook secret"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger all runnable tests in a group from a signed webhook URL."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

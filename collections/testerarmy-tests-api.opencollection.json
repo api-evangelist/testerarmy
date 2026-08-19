@@ -1,0 +1,178 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TestArmy Groups Tests API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Tests",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List tests",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/tests",
+            "params": [
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "query",
+                "description": "Project ID"
+              },
+              {
+                "name": "groupId",
+                "value": "",
+                "type": "query",
+                "description": "Optional test group ID"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results per page (default 50, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List tests for a project, optionally scoped to a test group. Use `cursor` for pagination; the response includes `nextCursor` when more pages exist."
+        },
+        {
+          "info": {
+            "name": "Create a test",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/tests",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a structured test definition for a project."
+        },
+        {
+          "info": {
+            "name": "Get a test",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/tests/:testId",
+            "params": [
+              {
+                "name": "testId",
+                "value": "",
+                "type": "path",
+                "description": "Test ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Get a single structured test definition, including the groups it belongs to."
+        },
+        {
+          "info": {
+            "name": "Update a test",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://tester.army/api/v1/tests/:testId",
+            "params": [
+              {
+                "name": "testId",
+                "value": "",
+                "type": "path",
+                "description": "Test ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Update a structured test definition."
+        },
+        {
+          "info": {
+            "name": "Delete a test",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://tester.army/api/v1/tests/:testId",
+            "params": [
+              {
+                "name": "testId",
+                "value": "",
+                "type": "path",
+                "description": "Test ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete a structured test definition."
+        },
+        {
+          "info": {
+            "name": "Trigger a test run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/tests/:testId/runs",
+            "params": [
+              {
+                "name": "testId",
+                "value": "",
+                "type": "path",
+                "description": "Test ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Trigger a saved dashboard test remotely using API-key authentication. Returns the queued run ID."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

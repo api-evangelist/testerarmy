@@ -1,0 +1,157 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "TestArmy Groups Test Runs API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Test Runs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List test runs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/runs",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Max results per page (default 20, max 100)"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status"
+              },
+              {
+                "name": "projectId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by project ID"
+              },
+              {
+                "name": "testId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by test ID"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "List test runs for the authenticated team with optional project/status filtering and cursor pagination."
+        },
+        {
+          "info": {
+            "name": "Get test run status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://tester.army/api/v1/runs/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Test run ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve the current status and result of a test run. Poll this endpoint to check for completion."
+        },
+        {
+          "info": {
+            "name": "Cancel a queued or running run",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/runs/:id/cancel",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Test run ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Cancel a queued or running test run."
+        },
+        {
+          "info": {
+            "name": "Cancel a queued or running batch",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/batches/:batchId/cancel",
+            "params": [
+              {
+                "name": "batchId",
+                "value": "",
+                "type": "path",
+                "description": "Batch ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Cancel all queued or running runs in a prior group-run batch. Finished runs are left unchanged, making the endpoint idempotent when the batch has already completed."
+        },
+        {
+          "info": {
+            "name": "Re-run a batch",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://tester.army/api/v1/batches/:batchId/rerun",
+            "params": [
+              {
+                "name": "batchId",
+                "value": "",
+                "type": "path",
+                "description": "Source batch ID"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Create a new group-run batch from the runnable tests in a prior batch. Deleted, disabled, or malformed tests are skipped and returned as `skippedTestIds`."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
