@@ -50,6 +50,8 @@ apis:
   humanURL: https://docs.tester.army/api-reference
   baseURL: https://tester.army/api/v1
   tags:
+  - Group
+  tags_raw:
   - Groups
   properties:
   - type: OpenAPI
@@ -60,6 +62,8 @@ apis:
   humanURL: https://docs.tester.army/api-reference
   baseURL: https://tester.army/api/v1
   tags:
+  - Project
+  tags_raw:
   - Projects
   properties:
   - type: OpenAPI
@@ -90,6 +94,8 @@ apis:
   humanURL: https://docs.tester.army/api-reference
   baseURL: https://tester.army/api/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
