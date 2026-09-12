@@ -120,6 +120,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Website
+  url: https://www.tester.army/
 - type: Overlay
   url: overlays/testerarmy-openapi-overlay.yaml
 - type: DomainSecurity
