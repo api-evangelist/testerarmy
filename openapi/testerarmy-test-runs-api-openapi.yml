@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: TestArmy Groups Test Runs API
+  title: TestArmy Test Runs API
   version: 1.0.0
   description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
 servers:
@@ -149,6 +149,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1Runs
+      x-operation-id-source: derived
   /v1/runs/{id}:
     get:
       summary: Get test run status
@@ -269,6 +271,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1RunsById
+      x-operation-id-source: derived
   /v1/runs/{id}/cancel:
     post:
       summary: Cancel a queued or running run
@@ -400,6 +404,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1RunsByIdCancel
+      x-operation-id-source: derived
   /v1/batches/{batchId}/cancel:
     post:
       summary: Cancel a queued or running batch
@@ -592,6 +598,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1BatchesByBatchIdCancel
+      x-operation-id-source: derived
   /v1/batches/{batchId}/rerun:
     post:
       summary: Re-run a batch
@@ -775,22 +783,137 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1BatchesByBatchIdRerun
+      x-operation-id-source: derived
 components:
   schemas:
-    RunListResponse:
+    PlannerSkippedOutput:
       type: object
       properties:
-        runs:
+        kind:
+          type: string
+          enum:
+          - planner_skipped
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required:
+      - kind
+      - reason
+    ReusableActionTarget:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - role
+          - css
+          - vision
+          - focused
+          - none
+        role:
+          type: string
+          maxLength: 60
+        name:
+          type: string
+          maxLength: 120
+        nth:
+          type: integer
+          minimum: 0
+        selector:
+          type: string
+          maxLength: 240
+        element:
+          type: string
+          maxLength: 140
+      required:
+      - kind
+    Issue:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - warning
+          default: issue
+          description: issue = confirmed bug, warning = non-blocking observation
+        name:
+          type: string
+          description: Short name of the issue (e.g. 'Login form rejects valid email')
+        description:
+          type: string
+          description: What was tested, what happened, and what was expected
+        url:
+          type: string
+          format: uri
+          description: URL where the issue happened
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Issue severity from 1 (minor) to 5 (critical)
+        reproductionSteps:
           type: array
           items:
-            $ref: '#/components/schemas/RunResponse'
-          description: List of runs
-        nextCursor:
+            type: string
+          description: Short reproduction steps in execution order
+        expectedBehavior:
           type: string
-          nullable: true
-          description: Cursor for fetching the next page
+          description: What should have happened
+        actualBehavior:
+          type: string
+          description: What actually happened
+        screenshotUrl:
+          type: string
+          description: Screenshot URL showing the issue
+        tMs:
+          type: integer
+          description: Milliseconds elapsed since the recording reference time when the issue was reported
       required:
-      - runs
+      - name
+      - description
+      - url
+    ReusableActionTrace:
+      type: object
+      properties:
+        version:
+          type: number
+          enum:
+          - 1
+        stepKey:
+          type: string
+          maxLength: 160
+        stepTitle:
+          type: string
+          maxLength: 200
+        stepType:
+          type: string
+          enum:
+          - act
+          - assert
+          - login
+          - files
+          - screenshot
+          - javascript
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReusableActionStep'
+          minItems: 1
+          maxItems: 20
+        confidence:
+          type: string
+          enum:
+          - medium
+          - high
+      required:
+      - version
+      - stepKey
+      - stepTitle
+      - actions
+      - confidence
     TestOutput:
       type: object
       properties:
@@ -827,81 +950,6 @@ components:
       - result
       - description
       - screenshots
-    ReusableActionTarget:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - role
-          - css
-          - vision
-          - focused
-          - none
-        role:
-          type: string
-          maxLength: 60
-        name:
-          type: string
-          maxLength: 120
-        nth:
-          type: integer
-          minimum: 0
-        selector:
-          type: string
-          maxLength: 240
-        element:
-          type: string
-          maxLength: 140
-      required:
-      - kind
-    ReusableActionStep:
-      type: object
-      properties:
-        order:
-          type: integer
-          minimum: 0
-        toolName:
-          type: string
-          maxLength: 64
-        summary:
-          type: string
-        target:
-          $ref: '#/components/schemas/ReusableActionTarget'
-        input:
-          type: object
-          properties:
-            url:
-              type: string
-              maxLength: 300
-            field:
-              type: string
-              enum:
-              - username
-              - password
-            option:
-              type: string
-              maxLength: 120
-            key:
-              type: string
-              maxLength: 60
-            direction:
-              type: string
-              enum:
-              - up
-              - down
-              - left
-              - right
-            amount:
-              type: integer
-            focused:
-              type: boolean
-            sequentially:
-              type: boolean
-      required:
-      - order
-      - toolName
-      - summary
     RunResponse:
       type: object
       properties:
@@ -925,8 +973,9 @@ components:
           - cancelled
           description: Current run status
         platform:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           enum:
           - web
           - ios
@@ -934,16 +983,18 @@ components:
           - null
           description: Target platform
         deviceModel:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           enum:
           - iphone
           - ipad
           - null
           description: Non-default mobile device variant within the run platform (e.g. ipad on iOS). Null means the platform default phone-sized device; explicitly requested defaults are stored as null.
         source:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           enum:
           - api
           - github_action
@@ -954,24 +1005,25 @@ components:
           - null
           description: Run source
         projectId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: uuid
           description: Linked project ID
         input:
           type: object
-          additionalProperties:
-            nullable: true
+          additionalProperties: {}
           description: Original request input
         output:
           anyOf:
           - $ref: '#/components/schemas/TestOutput'
           - $ref: '#/components/schemas/PlannerSkippedOutput'
-          - nullable: true
+          - {}
           description: Run output when completed or skipped
         testPlan:
-          type: object
-          nullable: true
+          type:
+          - object
+          - 'null'
           properties:
             instructions:
               type: string
@@ -1095,8 +1147,9 @@ components:
           - steps
           description: Generated test plan (CI runs only)
         error:
-          type: object
-          nullable: true
+          type:
+          - object
+          - 'null'
           properties:
             code:
               type: string
@@ -1109,17 +1162,20 @@ components:
           - message
           description: Error details when failed
         durationMs:
-          type: number
-          nullable: true
+          type:
+          - number
+          - 'null'
           description: Execution time in milliseconds
         webhookUrl:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: uri
           description: Webhook delivery URL
         webhookStatus:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           enum:
           - pending
           - delivered
@@ -1127,52 +1183,58 @@ components:
           - null
           description: Webhook delivery status
         testId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: uuid
           description: Linked test ID
         stepResults:
-          type: array
-          nullable: true
+          type:
+          - array
+          - 'null'
           items:
             type: object
-            additionalProperties:
-              nullable: true
+            additionalProperties: {}
           description: Step-level results for structured test runs
         userName:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           description: Display name of the user who triggered the run
         externalRef:
-          type: object
-          nullable: true
-          additionalProperties:
-            nullable: true
+          type:
+          - object
+          - 'null'
+          additionalProperties: {}
           description: External integration metadata (e.g. GitHub PR/deployment IDs)
         executionMode:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           enum:
           - fast
           - deep
           - null
           description: Execution mode used for this run
         autoRetryCount:
-          type: integer
-          nullable: true
+          type:
+          - integer
+          - 'null'
           description: Number of times the run was automatically retried after a temporary failure. Failed attempts are not counted toward usage.
         createdAt:
           type: string
           format: date-time
           description: When the run was created
         startedAt:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: date-time
           description: When execution started
         completedAt:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: date-time
           description: When execution finished
       required:
@@ -1181,45 +1243,6 @@ components:
       - status
       - input
       - createdAt
-    ReusableActionTrace:
-      type: object
-      properties:
-        version:
-          type: number
-          enum:
-          - 1
-        stepKey:
-          type: string
-          maxLength: 160
-        stepTitle:
-          type: string
-          maxLength: 200
-        stepType:
-          type: string
-          enum:
-          - act
-          - assert
-          - login
-          - files
-          - screenshot
-          - javascript
-        actions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReusableActionStep'
-          minItems: 1
-          maxItems: 20
-        confidence:
-          type: string
-          enum:
-          - medium
-          - high
-      required:
-      - version
-      - stepKey
-      - stepTitle
-      - actions
-      - confidence
     TestOutputStep:
       type: object
       properties:
@@ -1244,8 +1267,9 @@ components:
         summary:
           type: string
         error:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         errorCode:
           type: string
           enum:
@@ -1270,66 +1294,68 @@ components:
       - stepIndex
       - title
       - status
-    Issue:
+    ReusableActionStep:
       type: object
       properties:
-        type:
-          type: string
-          enum:
-          - issue
-          - warning
-          default: issue
-          description: issue = confirmed bug, warning = non-blocking observation
-        name:
-          type: string
-          description: Short name of the issue (e.g. 'Login form rejects valid email')
-        description:
-          type: string
-          description: What was tested, what happened, and what was expected
-        url:
-          type: string
-          format: uri
-          description: URL where the issue happened
-        severity:
+        order:
           type: integer
-          minimum: 1
-          maximum: 5
-          description: Issue severity from 1 (minor) to 5 (critical)
-        reproductionSteps:
+          minimum: 0
+        toolName:
+          type: string
+          maxLength: 64
+        summary:
+          type: string
+        target:
+          $ref: '#/components/schemas/ReusableActionTarget'
+        input:
+          type: object
+          properties:
+            url:
+              type: string
+              maxLength: 300
+            field:
+              type: string
+              enum:
+              - username
+              - password
+            option:
+              type: string
+              maxLength: 120
+            key:
+              type: string
+              maxLength: 60
+            direction:
+              type: string
+              enum:
+              - up
+              - down
+              - left
+              - right
+            amount:
+              type: integer
+            focused:
+              type: boolean
+            sequentially:
+              type: boolean
+      required:
+      - order
+      - toolName
+      - summary
+    RunListResponse:
+      type: object
+      properties:
+        runs:
           type: array
           items:
-            type: string
-          description: Short reproduction steps in execution order
-        expectedBehavior:
-          type: string
-          description: What should have happened
-        actualBehavior:
-          type: string
-          description: What actually happened
-        screenshotUrl:
-          type: string
-          description: Screenshot URL showing the issue
-        tMs:
-          type: integer
-          description: Milliseconds elapsed since the recording reference time when the issue was reported
+            $ref: '#/components/schemas/RunResponse'
+          description: List of runs
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page
       required:
-      - name
-      - description
-      - url
-    PlannerSkippedOutput:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - planner_skipped
-        reason:
-          type: string
-          minLength: 1
-          maxLength: 2000
-      required:
-      - kind
-      - reason
+      - runs
   securitySchemes:
     bearerAuth:
       type: http

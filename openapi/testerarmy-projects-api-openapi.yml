@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: TestArmy Groups Projects API
+  title: TestArmy Projects API
   version: 1.0.0
   description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
 servers:
@@ -38,8 +38,9 @@ paths:
                         name:
                           type: string
                         url:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                           format: uri
                         projectType:
                           type: string
@@ -65,8 +66,9 @@ paths:
                                 - pr_preview
                                 - static
                               url:
-                                type: string
-                                nullable: true
+                                type:
+                                - string
+                                - 'null'
                             required:
                             - id
                             - name
@@ -161,6 +163,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1Projects
+      x-operation-id-source: derived
     post:
       summary: Create a project
       description: Create a project for the authenticated API key's team.
@@ -188,8 +192,9 @@ paths:
                   - web
                   - mobile
                 description:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   maxLength: 2000
               required:
               - name
@@ -310,6 +315,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1Projects
+      x-operation-id-source: derived
   /v1/projects/{projectId}:
     get:
       summary: Get a project
@@ -429,6 +436,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectId
+      x-operation-id-source: derived
     patch:
       summary: Update a project
       description: Update project name, URL, or description.
@@ -459,8 +468,9 @@ paths:
                   minLength: 1
                   maxLength: 500
                 description:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   maxLength: 2000
       responses:
         '200':
@@ -554,6 +564,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: patchV1ProjectsByProjectId
+      x-operation-id-source: derived
     delete:
       summary: Delete a project
       description: Delete a project. Cascades to groups, tests, runs, and associated artifacts.
@@ -667,6 +679,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: deleteV1ProjectsByProjectId
+      x-operation-id-source: derived
   /v1/projects/{projectId}/pull-request-runs:
     post:
       summary: Trigger a dynamic pull request run
@@ -860,6 +874,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdPullRequestRuns
+      x-operation-id-source: derived
   /v1/projects/{projectId}/environments:
     get:
       summary: List project environments
@@ -986,6 +1002,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectIdEnvironments
+      x-operation-id-source: derived
     post:
       summary: Create a project environment
       description: Create a static project environment with a stable HTTPS URL. Built-in Production and PR Preview environments are managed by TesterArmy.
@@ -1143,6 +1161,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdEnvironments
+      x-operation-id-source: derived
   /v1/projects/{projectId}/environments/{environmentId}:
     delete:
       summary: Delete a project environment
@@ -1281,6 +1301,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: deleteV1ProjectsByProjectIdEnvironmentsByEnvironmentId
+      x-operation-id-source: derived
   /v1/projects/{projectId}/credentials:
     get:
       summary: List project credentials
@@ -1407,6 +1429,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectIdCredentials
+      x-operation-id-source: derived
     post:
       summary: Create a project credential
       description: Create a login or inbox credential for a project. Passwords are not returned.
@@ -1586,6 +1610,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdCredentials
+      x-operation-id-source: derived
   /v1/projects/{projectId}/memories:
     get:
       summary: List project memories
@@ -1718,6 +1744,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectIdMemories
+      x-operation-id-source: derived
     post:
       summary: Create a project memory
       description: Create a manual project memory that agents can use as project context.
@@ -1890,6 +1918,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdMemories
+      x-operation-id-source: derived
   /v1/projects/{projectId}/memories/{memoryId}:
     delete:
       summary: Delete a project memory
@@ -2026,6 +2056,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: deleteV1ProjectsByProjectIdMemoriesByMemoryId
+      x-operation-id-source: derived
   /v1/projects/{projectId}/files:
     get:
       summary: List project files
@@ -2152,6 +2184,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectIdFiles
+      x-operation-id-source: derived
   /v1/projects/{projectId}/mobile:
     get:
       summary: List project mobile apps
@@ -2193,14 +2227,17 @@ paths:
                         filename:
                           type: string
                         bundleId:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                         appVersion:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                         buildVersion:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                         fileSize:
                           type: number
                         source:
@@ -2210,12 +2247,14 @@ paths:
                           - group_webhook_artifact
                           - api_upload
                         expiresAt:
-                          type: string
-                          nullable: true
+                          type:
+                          - string
+                          - 'null'
                           format: date-time
                         removeAfter:
-                          type: integer
-                          nullable: true
+                          type:
+                          - integer
+                          - 'null'
                         createdAt:
                           type: string
                           format: date-time
@@ -2329,6 +2368,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1ProjectsByProjectIdMobile
+      x-operation-id-source: derived
     post:
       summary: Upload a project mobile app
       description: Upload a mobile app binary to a mobile project. Optionally set removeAfter to delete temporary uploads after a delay.
@@ -2381,14 +2422,17 @@ paths:
                       filename:
                         type: string
                       bundleId:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       appVersion:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       buildVersion:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       fileSize:
                         type: number
                       source:
@@ -2398,12 +2442,14 @@ paths:
                         - group_webhook_artifact
                         - api_upload
                       expiresAt:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                         format: date-time
                       removeAfter:
-                        type: integer
-                        nullable: true
+                        type:
+                        - integer
+                        - 'null'
                       createdAt:
                         type: string
                         format: date-time
@@ -2517,6 +2563,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdMobile
+      x-operation-id-source: derived
   /v1/projects/{projectId}/mobile/{appId}:
     delete:
       summary: Delete a project mobile app
@@ -2652,6 +2700,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: deleteV1ProjectsByProjectIdMobileByAppId
+      x-operation-id-source: derived
   /v1/projects/{projectId}/mobile/upload:
     post:
       summary: Initiate a project mobile app upload
@@ -2680,8 +2730,7 @@ paths:
                   minLength: 1
                 fileSize:
                   type: integer
-                  minimum: 0
-                  exclusiveMinimum: true
+                  exclusiveMinimum: 0
                 removeAfter:
                   type: integer
                   minimum: 60
@@ -2707,8 +2756,9 @@ paths:
                   fileSize:
                     type: integer
                   removeAfter:
-                    type: integer
-                    nullable: true
+                    type:
+                    - integer
+                    - 'null'
                 required:
                 - uploadUrl
                 - storageKey
@@ -2795,6 +2845,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdMobileUpload
+      x-operation-id-source: derived
   /v1/projects/{projectId}/mobile/upload/confirm:
     post:
       summary: Confirm a project mobile app upload
@@ -2826,8 +2878,7 @@ paths:
                   minLength: 1
                 fileSize:
                   type: integer
-                  minimum: 0
-                  exclusiveMinimum: true
+                  exclusiveMinimum: 0
                 removeAfter:
                   type: integer
                   minimum: 60
@@ -2858,14 +2909,17 @@ paths:
                       filename:
                         type: string
                       bundleId:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       appVersion:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       buildVersion:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                       fileSize:
                         type: number
                       source:
@@ -2875,12 +2929,14 @@ paths:
                         - group_webhook_artifact
                         - api_upload
                       expiresAt:
-                        type: string
-                        nullable: true
+                        type:
+                        - string
+                        - 'null'
                         format: date-time
                       removeAfter:
-                        type: integer
-                        nullable: true
+                        type:
+                        - integer
+                        - 'null'
                       createdAt:
                         type: string
                         format: date-time
@@ -2978,71 +3034,10 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1ProjectsByProjectIdMobileUploadConfirm
+      x-operation-id-source: derived
 components:
   schemas:
-    ProjectDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        shortId:
-          type: string
-          nullable: true
-        name:
-          type: string
-        url:
-          type: string
-          nullable: true
-        projectType:
-          type: string
-          enum:
-          - web
-          - mobile
-        description:
-          type: string
-          nullable: true
-        environments:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uuid
-              name:
-                type: string
-              slug:
-                type: string
-              kind:
-                type: string
-                enum:
-                - production
-                - pr_preview
-                - static
-              url:
-                type: string
-                nullable: true
-            required:
-            - id
-            - name
-            - slug
-            - kind
-            - url
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - shortId
-      - name
-      - url
-      - projectType
-      - description
-      - environments
     ProjectFileSummary:
       type: object
       properties:
@@ -3050,8 +3045,9 @@ components:
           type: string
           format: uuid
         projectId:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: uuid
         filename:
           type: string
@@ -3060,14 +3056,17 @@ components:
         fileSize:
           type: integer
         description:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         summary:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         createdAt:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: date-time
       required:
       - id
@@ -3078,66 +3077,6 @@ components:
       - description
       - summary
       - createdAt
-    CredentialSummary:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        kind:
-          type: string
-          enum:
-          - login
-          - inbox
-        authMethod:
-          type: string
-          enum:
-          - password
-          - google
-          - github
-          - custom
-        label:
-          type: string
-        username:
-          type: string
-        hasAuthInstructions:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - kind
-      - authMethod
-      - label
-      - username
-      - hasAuthInstructions
-      - createdAt
-    ProjectEnvironment:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        kind:
-          type: string
-          enum:
-          - production
-          - pr_preview
-          - static
-        url:
-          type: string
-          nullable: true
-      required:
-      - id
-      - name
-      - slug
-      - kind
-      - url
     ProjectMemory:
       type: object
       properties:
@@ -3174,6 +3113,134 @@ components:
       - importance
       - createdAt
       - updatedAt
+    ProjectEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        kind:
+          type: string
+          enum:
+          - production
+          - pr_preview
+          - static
+        url:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - name
+      - slug
+      - kind
+      - url
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        shortId:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+        projectType:
+          type: string
+          enum:
+          - web
+          - mobile
+        description:
+          type:
+          - string
+          - 'null'
+        environments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+              kind:
+                type: string
+                enum:
+                - production
+                - pr_preview
+                - static
+              url:
+                type:
+                - string
+                - 'null'
+            required:
+            - id
+            - name
+            - slug
+            - kind
+            - url
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - shortId
+      - name
+      - url
+      - projectType
+      - description
+      - environments
+    CredentialSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum:
+          - login
+          - inbox
+        authMethod:
+          type: string
+          enum:
+          - password
+          - google
+          - github
+          - custom
+        label:
+          type: string
+        username:
+          type: string
+        hasAuthInstructions:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - kind
+      - authMethod
+      - label
+      - username
+      - hasAuthInstructions
+      - createdAt
     DynamicPrRunRequest:
       anyOf:
       - type: object
@@ -3195,8 +3262,7 @@ components:
                 default: github
               number:
                 type: integer
-                minimum: 0
-                exclusiveMinimum: true
+                exclusiveMinimum: 0
               title:
                 type: string
                 minLength: 1
@@ -3242,8 +3308,7 @@ components:
                 default: github
               number:
                 type: integer
-                minimum: 0
-                exclusiveMinimum: true
+                exclusiveMinimum: 0
               title:
                 type: string
                 minLength: 1

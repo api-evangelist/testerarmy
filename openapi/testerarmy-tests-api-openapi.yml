@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: TestArmy Groups Tests API
+  title: TestArmy Tests API
   version: 1.0.0
   description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
 servers:
@@ -57,8 +57,9 @@ paths:
                 type: object
                 properties:
                   projectUrl:
-                    type: string
-                    nullable: true
+                    type:
+                    - string
+                    - 'null'
                     format: uri
                   projectName:
                     type: string
@@ -67,8 +68,9 @@ paths:
                     items:
                       $ref: '#/components/schemas/TestDefinition'
                   nextCursor:
-                    type: string
-                    nullable: true
+                    type:
+                    - string
+                    - 'null'
                 required:
                 - projectUrl
                 - projectName
@@ -170,6 +172,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1Tests
+      x-operation-id-source: derived
     post:
       summary: Create a test
       description: Create a structured test definition for a project.
@@ -198,8 +202,9 @@ paths:
                 projectId:
                   type: string
                 groupId:
-                  type: string
-                  nullable: true
+                  type:
+                  - string
+                  - 'null'
                   format: uuid
                 platform:
                   type: string
@@ -320,6 +325,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1Tests
+      x-operation-id-source: derived
   /v1/tests/{testId}:
     get:
       summary: Get a test
@@ -440,6 +447,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: getV1TestsByTestId
+      x-operation-id-source: derived
     patch:
       summary: Update a test
       description: Update a structured test definition.
@@ -568,6 +577,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: patchV1TestsByTestId
+      x-operation-id-source: derived
     delete:
       summary: Delete a test
       description: Delete a structured test definition.
@@ -682,6 +693,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: deleteV1TestsByTestId
+      x-operation-id-source: derived
   /v1/tests/{testId}/runs:
     post:
       summary: Trigger a test run
@@ -830,29 +843,10 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1TestsByTestIdRuns
+      x-operation-id-source: derived
 components:
   schemas:
-    TestDetail:
-      allOf:
-      - $ref: '#/components/schemas/TestDefinition'
-      - type: object
-        properties:
-          groups:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                name:
-                  type: string
-                isDefault:
-                  type: boolean
-              required:
-              - id
-              - name
-              - isDefault
     TestStep:
       oneOf:
       - type: object
@@ -934,6 +928,27 @@ components:
         required:
         - type
         - code
+    TestDetail:
+      allOf:
+      - $ref: '#/components/schemas/TestDefinition'
+      - type: object
+        properties:
+          groups:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                isDefault:
+                  type: boolean
+              required:
+              - id
+              - name
+              - isDefault
     TestDefinition:
       type: object
       properties:
@@ -943,8 +958,9 @@ components:
         title:
           type: string
         description:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
         enabled:
           type: boolean
         platform:
@@ -960,8 +976,9 @@ components:
           type: string
           format: uuid
         projectUrl:
-          type: string
-          nullable: true
+          type:
+          - string
+          - 'null'
           format: uri
         projectName:
           type: string

@@ -1,11 +1,7 @@
 {
   "provider": "testerarmy",
   "sources": [
-    "testerarmy-groups-api-openapi.yml",
-    "testerarmy-projects-api-openapi.yml",
-    "testerarmy-test-runs-api-openapi.yml",
-    "testerarmy-tests-api-openapi.yml",
-    "testerarmy-webhooks-api-openapi.yml"
+    "_original/testerarmy-openapi-original.json"
   ],
   "outputs": [
     "testerarmy-groups-api-openapi.yml",
@@ -17,6 +13,21 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "testerarmy-openapi-original.json: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "testerarmy-openapi-original.json: declared missing tag: Groups",
+    "testerarmy-openapi-original.json: declared missing tag: Projects",
+    "testerarmy-openapi-original.json: declared missing tag: Test Runs",
+    "testerarmy-openapi-original.json: declared missing tag: Tests",
+    "testerarmy-openapi-original.json: declared missing tag: Webhooks",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "testerarmy-groups-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testerarmy-projects-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testerarmy-test-runs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testerarmy-tests-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "testerarmy-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

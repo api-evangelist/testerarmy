@@ -1,6 +1,6 @@
-openapi: 3.0.0
+openapi: 3.2.0
 info:
-  title: TestArmy Groups Webhooks API
+  title: TestArmy Webhooks API
   version: 1.0.0
   description: AI-powered browser automation API for QA testing. Automate web testing workflows using natural language prompts.
 servers:
@@ -36,8 +36,7 @@ paths:
           application/json:
             schema:
               type: object
-              additionalProperties:
-                nullable: true
+              additionalProperties: {}
       responses:
         '200':
           description: Webhook accepted
@@ -148,6 +147,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1WebhookByWebhookIdBySecret
+      x-operation-id-source: derived
   /v1/groups/webhook/{webhookId}/{secret}:
     post:
       summary: Trigger a group webhook
@@ -332,6 +333,8 @@ paths:
                 required:
                 - error
                 - message
+      operationId: postV1GroupsWebhookByWebhookIdBySecret
+      x-operation-id-source: derived
 components:
   securitySchemes:
     bearerAuth:

@@ -1,7 +1,9 @@
 generated: '2026-07-21'
 method: searched
 host: https://tester.army
-documents:
+hosts:
+- host: https://tester.army
+  documents:
   - path: /.well-known/api-catalog
     status: 200
     file: testerarmy-api-catalog.json
@@ -14,3 +16,8 @@ documents:
     status: 404
   - path: /.well-known/ai-plugin.json
     status: 404
+x-shape-fix:
+  converted: '2026-08-20'
+  from: documents
+  note: Rewritten into hosts[] -> documents[], the only shape well_known_docs() in score.rb reads. A served
+    .well-known surface recorded in any other shape scores as absent.
