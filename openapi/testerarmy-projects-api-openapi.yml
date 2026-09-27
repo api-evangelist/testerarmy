@@ -3038,6 +3038,68 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    ProjectEnvironment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        kind:
+          type: string
+          enum:
+          - production
+          - pr_preview
+          - static
+        url:
+          type:
+          - string
+          - 'null'
+      required:
+      - id
+      - name
+      - slug
+      - kind
+      - url
+    ProjectMemory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          type: string
+          enum:
+          - site_structure
+          - test_insights
+          - user_preferences
+        title:
+          type: string
+        content:
+          type: string
+        importance:
+          type: string
+          enum:
+          - high
+          - medium
+          - low
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - category
+      - title
+      - content
+      - importance
+      - createdAt
+      - updatedAt
     ProjectFileSummary:
       type: object
       properties:
@@ -3076,170 +3138,6 @@ components:
       - fileSize
       - description
       - summary
-      - createdAt
-    ProjectMemory:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        category:
-          type: string
-          enum:
-          - site_structure
-          - test_insights
-          - user_preferences
-        title:
-          type: string
-        content:
-          type: string
-        importance:
-          type: string
-          enum:
-          - high
-          - medium
-          - low
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - category
-      - title
-      - content
-      - importance
-      - createdAt
-      - updatedAt
-    ProjectEnvironment:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        slug:
-          type: string
-        kind:
-          type: string
-          enum:
-          - production
-          - pr_preview
-          - static
-        url:
-          type:
-          - string
-          - 'null'
-      required:
-      - id
-      - name
-      - slug
-      - kind
-      - url
-    ProjectDetail:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        shortId:
-          type:
-          - string
-          - 'null'
-        name:
-          type: string
-        url:
-          type:
-          - string
-          - 'null'
-        projectType:
-          type: string
-          enum:
-          - web
-          - mobile
-        description:
-          type:
-          - string
-          - 'null'
-        environments:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uuid
-              name:
-                type: string
-              slug:
-                type: string
-              kind:
-                type: string
-                enum:
-                - production
-                - pr_preview
-                - static
-              url:
-                type:
-                - string
-                - 'null'
-            required:
-            - id
-            - name
-            - slug
-            - kind
-            - url
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - shortId
-      - name
-      - url
-      - projectType
-      - description
-      - environments
-    CredentialSummary:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        kind:
-          type: string
-          enum:
-          - login
-          - inbox
-        authMethod:
-          type: string
-          enum:
-          - password
-          - google
-          - github
-          - custom
-        label:
-          type: string
-        username:
-          type: string
-        hasAuthInstructions:
-          type: boolean
-        createdAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - kind
-      - authMethod
-      - label
-      - username
-      - hasAuthInstructions
       - createdAt
     DynamicPrRunRequest:
       anyOf:
@@ -3361,6 +3259,108 @@ components:
         - platform
         - pullRequest
         additionalProperties: false
+    CredentialSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum:
+          - login
+          - inbox
+        authMethod:
+          type: string
+          enum:
+          - password
+          - google
+          - github
+          - custom
+        label:
+          type: string
+        username:
+          type: string
+        hasAuthInstructions:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - kind
+      - authMethod
+      - label
+      - username
+      - hasAuthInstructions
+      - createdAt
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        shortId:
+          type:
+          - string
+          - 'null'
+        name:
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+        projectType:
+          type: string
+          enum:
+          - web
+          - mobile
+        description:
+          type:
+          - string
+          - 'null'
+        environments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+              kind:
+                type: string
+                enum:
+                - production
+                - pr_preview
+                - static
+              url:
+                type:
+                - string
+                - 'null'
+            required:
+            - id
+            - name
+            - slug
+            - kind
+            - url
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - shortId
+      - name
+      - url
+      - projectType
+      - description
+      - environments
   securitySchemes:
     bearerAuth:
       type: http

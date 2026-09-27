@@ -847,6 +847,27 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    TestDetail:
+      allOf:
+      - $ref: '#/components/schemas/TestDefinition'
+      - type: object
+        properties:
+          groups:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                isDefault:
+                  type: boolean
+              required:
+              - id
+              - name
+              - isDefault
     TestStep:
       oneOf:
       - type: object
@@ -928,27 +949,6 @@ components:
         required:
         - type
         - code
-    TestDetail:
-      allOf:
-      - $ref: '#/components/schemas/TestDefinition'
-      - type: object
-        properties:
-          groups:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                  format: uuid
-                name:
-                  type: string
-                isDefault:
-                  type: boolean
-              required:
-              - id
-              - name
-              - isDefault
     TestDefinition:
       type: object
       properties:

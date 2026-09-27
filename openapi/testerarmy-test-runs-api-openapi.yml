@@ -787,94 +787,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PlannerSkippedOutput:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - planner_skipped
-        reason:
-          type: string
-          minLength: 1
-          maxLength: 2000
-      required:
-      - kind
-      - reason
-    ReusableActionTarget:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - role
-          - css
-          - vision
-          - focused
-          - none
-        role:
-          type: string
-          maxLength: 60
-        name:
-          type: string
-          maxLength: 120
-        nth:
-          type: integer
-          minimum: 0
-        selector:
-          type: string
-          maxLength: 240
-        element:
-          type: string
-          maxLength: 140
-      required:
-      - kind
-    Issue:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - issue
-          - warning
-          default: issue
-          description: issue = confirmed bug, warning = non-blocking observation
-        name:
-          type: string
-          description: Short name of the issue (e.g. 'Login form rejects valid email')
-        description:
-          type: string
-          description: What was tested, what happened, and what was expected
-        url:
-          type: string
-          format: uri
-          description: URL where the issue happened
-        severity:
-          type: integer
-          minimum: 1
-          maximum: 5
-          description: Issue severity from 1 (minor) to 5 (critical)
-        reproductionSteps:
-          type: array
-          items:
-            type: string
-          description: Short reproduction steps in execution order
-        expectedBehavior:
-          type: string
-          description: What should have happened
-        actualBehavior:
-          type: string
-          description: What actually happened
-        screenshotUrl:
-          type: string
-          description: Screenshot URL showing the issue
-        tMs:
-          type: integer
-          description: Milliseconds elapsed since the recording reference time when the issue was reported
-      required:
-      - name
-      - description
-      - url
     ReusableActionTrace:
       type: object
       properties:
@@ -950,6 +862,207 @@ components:
       - result
       - description
       - screenshots
+    Issue:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - warning
+          default: issue
+          description: issue = confirmed bug, warning = non-blocking observation
+        name:
+          type: string
+          description: Short name of the issue (e.g. 'Login form rejects valid email')
+        description:
+          type: string
+          description: What was tested, what happened, and what was expected
+        url:
+          type: string
+          format: uri
+          description: URL where the issue happened
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Issue severity from 1 (minor) to 5 (critical)
+        reproductionSteps:
+          type: array
+          items:
+            type: string
+          description: Short reproduction steps in execution order
+        expectedBehavior:
+          type: string
+          description: What should have happened
+        actualBehavior:
+          type: string
+          description: What actually happened
+        screenshotUrl:
+          type: string
+          description: Screenshot URL showing the issue
+        tMs:
+          type: integer
+          description: Milliseconds elapsed since the recording reference time when the issue was reported
+      required:
+      - name
+      - description
+      - url
+    RunListResponse:
+      type: object
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          description: List of runs
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page
+      required:
+      - runs
+    TestOutputStep:
+      type: object
+      properties:
+        stepIndex:
+          type: integer
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+          - act
+          - assert
+          - login
+          - files
+          - screenshot
+          - javascript
+        status:
+          type: string
+          enum:
+          - passed
+          - failed
+        summary:
+          type: string
+        error:
+          type:
+          - string
+          - 'null'
+        errorCode:
+          type: string
+          enum:
+          - AUTH_CREDENTIAL_UNAVAILABLE
+          - AUTH_CREDENTIAL_INVALID
+          - AUTH_BASIC_REQUIRED
+          - VERCEL_BYPASS_REQUIRED
+          - MOBILE_RELEASE_BUILD_REQUIRED
+          - VIEWPORT_RESIZE_UNSUPPORTED
+          - STEP_TOOL_LIMIT_EXHAUSTED
+          - STEP_DEADLINE_EXHAUSTED
+          - STEP_NO_CONCLUSION
+        startedAtMs:
+          type: integer
+          description: Milliseconds elapsed since recording reference when the step started
+        completedAtMs:
+          type: integer
+          description: Milliseconds elapsed since recording reference when the step completed
+        reusableActionTrace:
+          $ref: '#/components/schemas/ReusableActionTrace'
+      required:
+      - stepIndex
+      - title
+      - status
+    PlannerSkippedOutput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - planner_skipped
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required:
+      - kind
+      - reason
+    ReusableActionStep:
+      type: object
+      properties:
+        order:
+          type: integer
+          minimum: 0
+        toolName:
+          type: string
+          maxLength: 64
+        summary:
+          type: string
+        target:
+          $ref: '#/components/schemas/ReusableActionTarget'
+        input:
+          type: object
+          properties:
+            url:
+              type: string
+              maxLength: 300
+            field:
+              type: string
+              enum:
+              - username
+              - password
+            option:
+              type: string
+              maxLength: 120
+            key:
+              type: string
+              maxLength: 60
+            direction:
+              type: string
+              enum:
+              - up
+              - down
+              - left
+              - right
+            amount:
+              type: integer
+            focused:
+              type: boolean
+            sequentially:
+              type: boolean
+      required:
+      - order
+      - toolName
+      - summary
+    ReusableActionTarget:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - role
+          - css
+          - vision
+          - focused
+          - none
+        role:
+          type: string
+          maxLength: 60
+        name:
+          type: string
+          maxLength: 120
+        nth:
+          type: integer
+          minimum: 0
+        selector:
+          type: string
+          maxLength: 240
+        element:
+          type: string
+          maxLength: 140
+      required:
+      - kind
     RunResponse:
       type: object
       properties:
@@ -1243,119 +1356,6 @@ components:
       - status
       - input
       - createdAt
-    TestOutputStep:
-      type: object
-      properties:
-        stepIndex:
-          type: integer
-        title:
-          type: string
-        type:
-          type: string
-          enum:
-          - act
-          - assert
-          - login
-          - files
-          - screenshot
-          - javascript
-        status:
-          type: string
-          enum:
-          - passed
-          - failed
-        summary:
-          type: string
-        error:
-          type:
-          - string
-          - 'null'
-        errorCode:
-          type: string
-          enum:
-          - AUTH_CREDENTIAL_UNAVAILABLE
-          - AUTH_CREDENTIAL_INVALID
-          - AUTH_BASIC_REQUIRED
-          - VERCEL_BYPASS_REQUIRED
-          - MOBILE_RELEASE_BUILD_REQUIRED
-          - VIEWPORT_RESIZE_UNSUPPORTED
-          - STEP_TOOL_LIMIT_EXHAUSTED
-          - STEP_DEADLINE_EXHAUSTED
-          - STEP_NO_CONCLUSION
-        startedAtMs:
-          type: integer
-          description: Milliseconds elapsed since recording reference when the step started
-        completedAtMs:
-          type: integer
-          description: Milliseconds elapsed since recording reference when the step completed
-        reusableActionTrace:
-          $ref: '#/components/schemas/ReusableActionTrace'
-      required:
-      - stepIndex
-      - title
-      - status
-    ReusableActionStep:
-      type: object
-      properties:
-        order:
-          type: integer
-          minimum: 0
-        toolName:
-          type: string
-          maxLength: 64
-        summary:
-          type: string
-        target:
-          $ref: '#/components/schemas/ReusableActionTarget'
-        input:
-          type: object
-          properties:
-            url:
-              type: string
-              maxLength: 300
-            field:
-              type: string
-              enum:
-              - username
-              - password
-            option:
-              type: string
-              maxLength: 120
-            key:
-              type: string
-              maxLength: 60
-            direction:
-              type: string
-              enum:
-              - up
-              - down
-              - left
-              - right
-            amount:
-              type: integer
-            focused:
-              type: boolean
-            sequentially:
-              type: boolean
-      required:
-      - order
-      - toolName
-      - summary
-    RunListResponse:
-      type: object
-      properties:
-        runs:
-          type: array
-          items:
-            $ref: '#/components/schemas/RunResponse'
-          description: List of runs
-        nextCursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page
-      required:
-      - runs
   securitySchemes:
     bearerAuth:
       type: http
