@@ -3038,6 +3038,41 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    CredentialSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum:
+          - login
+          - inbox
+        authMethod:
+          type: string
+          enum:
+          - password
+          - google
+          - github
+          - custom
+        label:
+          type: string
+        username:
+          type: string
+        hasAuthInstructions:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - kind
+      - authMethod
+      - label
+      - username
+      - hasAuthInstructions
+      - createdAt
     ProjectEnvironment:
       type: object
       properties:
@@ -3064,81 +3099,6 @@ components:
       - slug
       - kind
       - url
-    ProjectMemory:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        category:
-          type: string
-          enum:
-          - site_structure
-          - test_insights
-          - user_preferences
-        title:
-          type: string
-        content:
-          type: string
-        importance:
-          type: string
-          enum:
-          - high
-          - medium
-          - low
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - category
-      - title
-      - content
-      - importance
-      - createdAt
-      - updatedAt
-    ProjectFileSummary:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        projectId:
-          type:
-          - string
-          - 'null'
-          format: uuid
-        filename:
-          type: string
-        mediaType:
-          type: string
-        fileSize:
-          type: integer
-        description:
-          type:
-          - string
-          - 'null'
-        summary:
-          type:
-          - string
-          - 'null'
-        createdAt:
-          type:
-          - string
-          - 'null'
-          format: date-time
-      required:
-      - id
-      - projectId
-      - filename
-      - mediaType
-      - fileSize
-      - description
-      - summary
-      - createdAt
     DynamicPrRunRequest:
       anyOf:
       - type: object
@@ -3259,40 +3219,80 @@ components:
         - platform
         - pullRequest
         additionalProperties: false
-    CredentialSummary:
+    ProjectMemory:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        kind:
+        category:
           type: string
           enum:
-          - login
-          - inbox
-        authMethod:
+          - site_structure
+          - test_insights
+          - user_preferences
+        title:
+          type: string
+        content:
+          type: string
+        importance:
           type: string
           enum:
-          - password
-          - google
-          - github
-          - custom
-        label:
-          type: string
-        username:
-          type: string
-        hasAuthInstructions:
-          type: boolean
+          - high
+          - medium
+          - low
         createdAt:
+          type: string
+          format: date-time
+        updatedAt:
           type: string
           format: date-time
       required:
       - id
-      - kind
-      - authMethod
-      - label
-      - username
-      - hasAuthInstructions
+      - category
+      - title
+      - content
+      - importance
+      - createdAt
+      - updatedAt
+    ProjectFileSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+        filename:
+          type: string
+        mediaType:
+          type: string
+        fileSize:
+          type: integer
+        description:
+          type:
+          - string
+          - 'null'
+        summary:
+          type:
+          - string
+          - 'null'
+        createdAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      required:
+      - id
+      - projectId
+      - filename
+      - mediaType
+      - fileSize
+      - description
+      - summary
       - createdAt
     ProjectDetail:
       type: object

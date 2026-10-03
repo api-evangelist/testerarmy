@@ -787,142 +787,34 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    ReusableActionTrace:
+    ReusableActionTarget:
       type: object
       properties:
-        version:
-          type: number
-          enum:
-          - 1
-        stepKey:
-          type: string
-          maxLength: 160
-        stepTitle:
-          type: string
-          maxLength: 200
-        stepType:
+        kind:
           type: string
           enum:
-          - act
-          - assert
-          - login
-          - files
-          - screenshot
-          - javascript
-        actions:
-          type: array
-          items:
-            $ref: '#/components/schemas/ReusableActionStep'
-          minItems: 1
-          maxItems: 20
-        confidence:
+          - role
+          - css
+          - vision
+          - focused
+          - none
+        role:
           type: string
-          enum:
-          - medium
-          - high
-      required:
-      - version
-      - stepKey
-      - stepTitle
-      - actions
-      - confidence
-    TestOutput:
-      type: object
-      properties:
-        featureName:
-          type: string
-          description: Name of the feature being tested
-        result:
-          type: string
-          enum:
-          - PASS
-          - FAILED
-          description: Test result - PASS if no issues found, FAILED if any issues were reported
-        description:
-          type: string
-          description: Short summary of what was tested and the final result; include a compact grouped issue summary only when the user explicitly asks for one
-        issues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Issue'
-          default: []
-          description: Issues reported during the session via the report_issue tool
-        screenshots:
-          type: array
-          items:
-            type: string
-          description: Array of screenshot URLs captured during testing
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/TestOutputStep'
-          description: Per-step summaries with timing information
-      required:
-      - featureName
-      - result
-      - description
-      - screenshots
-    Issue:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-          - issue
-          - warning
-          default: issue
-          description: issue = confirmed bug, warning = non-blocking observation
+          maxLength: 60
         name:
           type: string
-          description: Short name of the issue (e.g. 'Login form rejects valid email')
-        description:
-          type: string
-          description: What was tested, what happened, and what was expected
-        url:
-          type: string
-          format: uri
-          description: URL where the issue happened
-        severity:
+          maxLength: 120
+        nth:
           type: integer
-          minimum: 1
-          maximum: 5
-          description: Issue severity from 1 (minor) to 5 (critical)
-        reproductionSteps:
-          type: array
-          items:
-            type: string
-          description: Short reproduction steps in execution order
-        expectedBehavior:
+          minimum: 0
+        selector:
           type: string
-          description: What should have happened
-        actualBehavior:
+          maxLength: 240
+        element:
           type: string
-          description: What actually happened
-        screenshotUrl:
-          type: string
-          description: Screenshot URL showing the issue
-        tMs:
-          type: integer
-          description: Milliseconds elapsed since the recording reference time when the issue was reported
+          maxLength: 140
       required:
-      - name
-      - description
-      - url
-    RunListResponse:
-      type: object
-      properties:
-        runs:
-          type: array
-          items:
-            $ref: '#/components/schemas/RunResponse'
-          description: List of runs
-        nextCursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page
-      required:
-      - runs
+      - kind
     TestOutputStep:
       type: object
       properties:
@@ -974,6 +866,52 @@ components:
       - stepIndex
       - title
       - status
+    Issue:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - warning
+          default: issue
+          description: issue = confirmed bug, warning = non-blocking observation
+        name:
+          type: string
+          description: Short name of the issue (e.g. 'Login form rejects valid email')
+        description:
+          type: string
+          description: What was tested, what happened, and what was expected
+        url:
+          type: string
+          format: uri
+          description: URL where the issue happened
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Issue severity from 1 (minor) to 5 (critical)
+        reproductionSteps:
+          type: array
+          items:
+            type: string
+          description: Short reproduction steps in execution order
+        expectedBehavior:
+          type: string
+          description: What should have happened
+        actualBehavior:
+          type: string
+          description: What actually happened
+        screenshotUrl:
+          type: string
+          description: Screenshot URL showing the issue
+        tMs:
+          type: integer
+          description: Milliseconds elapsed since the recording reference time when the issue was reported
+      required:
+      - name
+      - description
+      - url
     PlannerSkippedOutput:
       type: object
       properties:
@@ -988,6 +926,96 @@ components:
       required:
       - kind
       - reason
+    TestOutput:
+      type: object
+      properties:
+        featureName:
+          type: string
+          description: Name of the feature being tested
+        result:
+          type: string
+          enum:
+          - PASS
+          - FAILED
+          description: Test result - PASS if no issues found, FAILED if any issues were reported
+        description:
+          type: string
+          description: Short summary of what was tested and the final result; include a compact grouped issue summary only when the user explicitly asks for one
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Issue'
+          default: []
+          description: Issues reported during the session via the report_issue tool
+        screenshots:
+          type: array
+          items:
+            type: string
+          description: Array of screenshot URLs captured during testing
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestOutputStep'
+          description: Per-step summaries with timing information
+      required:
+      - featureName
+      - result
+      - description
+      - screenshots
+    ReusableActionTrace:
+      type: object
+      properties:
+        version:
+          type: number
+          enum:
+          - 1
+        stepKey:
+          type: string
+          maxLength: 160
+        stepTitle:
+          type: string
+          maxLength: 200
+        stepType:
+          type: string
+          enum:
+          - act
+          - assert
+          - login
+          - files
+          - screenshot
+          - javascript
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReusableActionStep'
+          minItems: 1
+          maxItems: 20
+        confidence:
+          type: string
+          enum:
+          - medium
+          - high
+      required:
+      - version
+      - stepKey
+      - stepTitle
+      - actions
+      - confidence
+    RunListResponse:
+      type: object
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          description: List of runs
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page
+      required:
+      - runs
     ReusableActionStep:
       type: object
       properties:
@@ -1035,34 +1063,6 @@ components:
       - order
       - toolName
       - summary
-    ReusableActionTarget:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - role
-          - css
-          - vision
-          - focused
-          - none
-        role:
-          type: string
-          maxLength: 60
-        name:
-          type: string
-          maxLength: 120
-        nth:
-          type: integer
-          minimum: 0
-        selector:
-          type: string
-          maxLength: 240
-        element:
-          type: string
-          maxLength: 140
-      required:
-      - kind
     RunResponse:
       type: object
       properties:

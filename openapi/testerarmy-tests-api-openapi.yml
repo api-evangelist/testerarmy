@@ -868,6 +868,49 @@ components:
               - id
               - name
               - isDefault
+    TestDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type:
+          - string
+          - 'null'
+        enabled:
+          type: boolean
+        platform:
+          type: string
+          enum:
+          - web
+          - mobile
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestStep'
+        projectId:
+          type: string
+          format: uuid
+        projectUrl:
+          type:
+          - string
+          - 'null'
+          format: uri
+        projectName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - title
+      - steps
     TestStep:
       oneOf:
       - type: object
@@ -949,49 +992,6 @@ components:
         required:
         - type
         - code
-    TestDefinition:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        title:
-          type: string
-        description:
-          type:
-          - string
-          - 'null'
-        enabled:
-          type: boolean
-        platform:
-          type: string
-          enum:
-          - web
-          - mobile
-        steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/TestStep'
-        projectId:
-          type: string
-          format: uuid
-        projectUrl:
-          type:
-          - string
-          - 'null'
-          format: uri
-        projectName:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-      required:
-      - id
-      - title
-      - steps
   securitySchemes:
     bearerAuth:
       type: http
