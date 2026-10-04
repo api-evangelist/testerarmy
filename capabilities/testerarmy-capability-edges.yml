@@ -1,0 +1,44 @@
+slug: testerarmy
+provider: Testerarmy
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Test Runs
+  spec_file: testerarmy-test-runs-api-openapi.yml
+  capability_id: BC-4200.50
+  capability_id_l1: BC-4200
+  capability_name: Software Quality Engineering
+  confidence: 0.9
+  evidence: GET /v1/runs/{id}  getV1RunsById  Get test run status; POST /v1/batches/{batchId}/rerun  Re-run
+    a batch
+  reason: Execution, monitoring, cancellation and re-run of automated QA test runs with Issue/TestOutput
+    schemas — clearly automated test execution and defect surfacing.
+- tag: Tests
+  spec_file: testerarmy-tests-api-openapi.yml
+  capability_id: BC-4200.50
+  capability_id_l1: BC-4200
+  capability_name: Software Quality Engineering
+  confidence: 0.9
+  evidence: POST /v1/tests  postV1Tests  Create a test; POST /v1/tests/{testId}/runs  Trigger a test run
+  reason: CRUD over test definitions (TestDefinition, TestStep schemas) and triggering their execution
+    — core automated test suite stewardship.
+- tag: Groups
+  spec_file: testerarmy-groups-api-openapi.yml
+  capability_id: BC-4200.50
+  capability_id_l1: BC-4200
+  capability_name: Software Quality Engineering
+  confidence: 0.85
+  evidence: POST /v1/groups/{groupId}/tests  Add a test to a group; POST /v1/groups/{groupId}/runs  Trigger
+    a test group run
+  reason: Manages groupings of automated QA tests and triggers their execution — test suite stewardship
+    and execution within software quality engineering.
