@@ -866,66 +866,53 @@ components:
       - stepIndex
       - title
       - status
-    Issue:
+    ReusableActionStep:
       type: object
       properties:
-        type:
-          type: string
-          enum:
-          - issue
-          - warning
-          default: issue
-          description: issue = confirmed bug, warning = non-blocking observation
-        name:
-          type: string
-          description: Short name of the issue (e.g. 'Login form rejects valid email')
-        description:
-          type: string
-          description: What was tested, what happened, and what was expected
-        url:
-          type: string
-          format: uri
-          description: URL where the issue happened
-        severity:
+        order:
           type: integer
-          minimum: 1
-          maximum: 5
-          description: Issue severity from 1 (minor) to 5 (critical)
-        reproductionSteps:
-          type: array
-          items:
-            type: string
-          description: Short reproduction steps in execution order
-        expectedBehavior:
+          minimum: 0
+        toolName:
           type: string
-          description: What should have happened
-        actualBehavior:
+          maxLength: 64
+        summary:
           type: string
-          description: What actually happened
-        screenshotUrl:
-          type: string
-          description: Screenshot URL showing the issue
-        tMs:
-          type: integer
-          description: Milliseconds elapsed since the recording reference time when the issue was reported
+        target:
+          $ref: '#/components/schemas/ReusableActionTarget'
+        input:
+          type: object
+          properties:
+            url:
+              type: string
+              maxLength: 300
+            field:
+              type: string
+              enum:
+              - username
+              - password
+            option:
+              type: string
+              maxLength: 120
+            key:
+              type: string
+              maxLength: 60
+            direction:
+              type: string
+              enum:
+              - up
+              - down
+              - left
+              - right
+            amount:
+              type: integer
+            focused:
+              type: boolean
+            sequentially:
+              type: boolean
       required:
-      - name
-      - description
-      - url
-    PlannerSkippedOutput:
-      type: object
-      properties:
-        kind:
-          type: string
-          enum:
-          - planner_skipped
-        reason:
-          type: string
-          minLength: 1
-          maxLength: 2000
-      required:
-      - kind
-      - reason
+      - order
+      - toolName
+      - summary
     TestOutput:
       type: object
       properties:
@@ -1001,68 +988,6 @@ components:
       - stepTitle
       - actions
       - confidence
-    RunListResponse:
-      type: object
-      properties:
-        runs:
-          type: array
-          items:
-            $ref: '#/components/schemas/RunResponse'
-          description: List of runs
-        nextCursor:
-          type:
-          - string
-          - 'null'
-          description: Cursor for fetching the next page
-      required:
-      - runs
-    ReusableActionStep:
-      type: object
-      properties:
-        order:
-          type: integer
-          minimum: 0
-        toolName:
-          type: string
-          maxLength: 64
-        summary:
-          type: string
-        target:
-          $ref: '#/components/schemas/ReusableActionTarget'
-        input:
-          type: object
-          properties:
-            url:
-              type: string
-              maxLength: 300
-            field:
-              type: string
-              enum:
-              - username
-              - password
-            option:
-              type: string
-              maxLength: 120
-            key:
-              type: string
-              maxLength: 60
-            direction:
-              type: string
-              enum:
-              - up
-              - down
-              - left
-              - right
-            amount:
-              type: integer
-            focused:
-              type: boolean
-            sequentially:
-              type: boolean
-      required:
-      - order
-      - toolName
-      - summary
     RunResponse:
       type: object
       properties:
@@ -1356,6 +1281,81 @@ components:
       - status
       - input
       - createdAt
+    PlannerSkippedOutput:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+          - planner_skipped
+        reason:
+          type: string
+          minLength: 1
+          maxLength: 2000
+      required:
+      - kind
+      - reason
+    RunListResponse:
+      type: object
+      properties:
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/RunResponse'
+          description: List of runs
+        nextCursor:
+          type:
+          - string
+          - 'null'
+          description: Cursor for fetching the next page
+      required:
+      - runs
+    Issue:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - issue
+          - warning
+          default: issue
+          description: issue = confirmed bug, warning = non-blocking observation
+        name:
+          type: string
+          description: Short name of the issue (e.g. 'Login form rejects valid email')
+        description:
+          type: string
+          description: What was tested, what happened, and what was expected
+        url:
+          type: string
+          format: uri
+          description: URL where the issue happened
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Issue severity from 1 (minor) to 5 (critical)
+        reproductionSteps:
+          type: array
+          items:
+            type: string
+          description: Short reproduction steps in execution order
+        expectedBehavior:
+          type: string
+          description: What should have happened
+        actualBehavior:
+          type: string
+          description: What actually happened
+        screenshotUrl:
+          type: string
+          description: Screenshot URL showing the issue
+        tMs:
+          type: integer
+          description: Milliseconds elapsed since the recording reference time when the issue was reported
+      required:
+      - name
+      - description
+      - url
   securitySchemes:
     bearerAuth:
       type: http
